@@ -42,8 +42,9 @@ public class Controller implements Runnable {
 					
 					//init the streams and get the player info
 					p = new Process(s);
-					Controller.this.sendMessage(p.getPlayer().getName()+ " has joined.");
-					Controller.this.sendMessage(" Waiting for "+(size-index)+"/"+size+" players ");
+					Controller.this.sendPlayerUpdate(p.getPlayer().getName());
+					
+					Controller.this.sendMessage("Waiting for "+(size-index)+"/"+size+" players ");
 				
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -61,6 +62,28 @@ public class Controller implements Runnable {
 			}
 		}).start();
 
+	}
+
+	protected void sendPlayerUpdate(final String name) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				for (Process p : players) {
+					if(p==null)
+						continue;
+					try {
+						p.sendPlayerUpdate(name);
+					} catch (IOException e) {
+
+						e.printStackTrace();
+					}
+				}
+
+			}
+		}).start();
+
+		
 	}
 
 	public Controller(int size) {
@@ -86,7 +109,10 @@ public class Controller implements Runnable {
 
 			@Override
 			public void run() {
+				
 				for (Process p : players) {
+					if(p==null)
+						continue;
 					try {
 						p.sendMessage(msg);
 					} catch (IOException e) {
