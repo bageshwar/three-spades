@@ -46,6 +46,7 @@ public class Process implements Runnable {
 		while (!monitor)
 			try {
 				Thread.sleep(500);
+				System.out.println("Sleeping for monitor to be notified.");
 			} catch (InterruptedException e) {
 
 				e.printStackTrace();
@@ -139,7 +140,7 @@ public class Process implements Runnable {
 		
 		//input = new ObjectInputStream(socket.getInputStream());
 
-		output.writeChars(Codes.OK);
+		output.writeObject(Codes.OK);
 		output.flush();
 		System.out.println("wrote "+Codes.OK);
 /*		String s = input.readUTF();
