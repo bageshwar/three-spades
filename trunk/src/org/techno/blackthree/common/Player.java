@@ -16,10 +16,22 @@ public class Player implements Serializable {
 	 * The set of cards this player has.
 	 * */
 	private ArrayList<Card> cards;
-	private String name = ""+Math.random();
+	private String name ;
 	
 	
 	
+	public Player(String name) {
+		this(new ArrayList<Card>(),name);
+	}
+
+
+	public Player(ArrayList<Card> cards, String name) {
+		
+		this.cards = cards;
+		this.name = name;
+	}
+
+
 	/**
 	 * @return the cards
 	 */

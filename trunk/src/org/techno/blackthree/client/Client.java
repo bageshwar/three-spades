@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import org.techno.blackthree.common.Codes;
+import org.techno.blackthree.common.Player;
 import org.techno.blackthree.server.Server;
 
 /**
@@ -27,6 +28,9 @@ public class Client implements Runnable {
 	private boolean monitor = false;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
+	
+	private boolean connectionOK = false;
+	private Player player;
 
 	public static void main(String s[]) {
 
@@ -76,6 +80,7 @@ public class Client implements Runnable {
 
 	private Client(String host, int port) throws UnknownHostException, IOException {
 		clientSocket = new Socket(host, port);
+		player = new Player("Player# "+Math.random());
 	}
 
 	@Override
@@ -83,7 +88,22 @@ public class Client implements Runnable {
 
 		try {
 			initStreams();
-			clientSocket.close();
+			
+			/**
+			 * Flow
+			 * 1. Wait for OK
+			 * 2. Send player details
+			 * 3. Get Players update
+			 * --------
+			 * 4. Wait for round start
+			 * 5. Get Card details
+			 * 
+			 * */
+			
+			
+			
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,16 +118,16 @@ public class Client implements Runnable {
 
 		System.out.println("Initing Client streams...");
 		input = new ObjectInputStream(clientSocket.getInputStream());
-		//output = new ObjectOutputStream(clientSocket.getOutputStream());
+		output = new ObjectOutputStream(clientSocket.getOutputStream());
 
-		System.out.println(input.available());
-		//Object  o =input.readObject(); 
-		String s = input.readUTF();
+		
+		 
+		Object s = input.readObject();
 		System.out.println("read "+s);
-		if (Codes.OK.equalsIgnoreCase(s))
+		if (Codes.OK.equalsIgnoreCase(s.toString()))
 			System.out.println("Connection Successfull");
 		
-		//output.writeChars(Codes.OK);
+		output.writeChars(Codes.OK);
 
 	}
 }
