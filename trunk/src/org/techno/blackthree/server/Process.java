@@ -62,18 +62,18 @@ public class Process implements Runnable {
 	 */
 	@Override
 	public void run() {
+		
+		System.out.println("New Process at server started for player ");
 
 		try {
-			
-			initPlayerInfo();
 			
 			while(!tired){				
 				Thread.sleep(POLL_TIME);				
 			}
 			
-			sendOutHand();
+			//sendOutHand();
 			
-			sendRoundSummary();
+			//sendRoundSummary();
 			
 			//we are tired.
 			//send out the summary to the player.
@@ -81,12 +81,6 @@ public class Process implements Runnable {
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidDataStreamException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -111,8 +105,9 @@ public class Process implements Runnable {
 	 * @throws IOException 
 	 * */
 	public void sendGameSummary() throws IOException {
-		output.writeBoolean(tired);
-		
+		output.writeObject(Codes.GAME_OVER);
+		output.writeObject(gameSummary);
+		output.flush();
 	}
 	
 	
@@ -133,20 +128,20 @@ public class Process implements Runnable {
 		this.tired = tired;
 	}
 
-	private void initStreams() throws IOException {
+	private void initStreams() throws IOException, ClassNotFoundException {
 
 		System.out.println("Initing Server streams...");		
 		output = new ObjectOutputStream(socket.getOutputStream());
 		
-		//input = new ObjectInputStream(socket.getInputStream());
+		input = new ObjectInputStream(socket.getInputStream());
 
 		output.writeObject(Codes.OK);
 		output.flush();
-		System.out.println("wrote "+Codes.OK);
-/*		String s = input.readUTF();
+		//System.out.println("wrote "+Codes.OK);
+		String s = (String) input.readObject();
 		if(Codes.OK.equalsIgnoreCase(s))
 			System.out.println("Connection Successfull");
-*/		
+		
 	}
 
 	private void initPlayerInfo() throws IOException, ClassNotFoundException, InvalidDataStreamException {
@@ -154,10 +149,15 @@ public class Process implements Runnable {
 		 * Assuming that we have the streams with us now.
 		 * */
 		
-		output.writeChars(Codes.GIVE_PLAYER);
+		output.writeObject(Codes.GIVE_PLAYER);
+		output.flush();
 		Object o = input.readObject();
 		try{
 		player = (Player) o;
+		System.out.println("Server recieved new player: "+ player.getName());
+		
+		output.writeObject(Codes.OK);
+		output.flush();
 		}catch(ClassCastException cce){
 			cce.printStackTrace();
 			throw new InvalidDataStreamException("Player Details expected");
@@ -169,14 +169,26 @@ public class Process implements Runnable {
 
 	public Process(Socket socket) throws IOException, ClassNotFoundException, InvalidDataStreamException {
 		this.socket = socket;
+
 		initStreams();
-		//initPlayerInfo();
+		initPlayerInfo();
+		
+		new Thread(this).start();
 		
 	}
 
 	synchronized public  void sendMessage(String msg) throws IOException{
 	
-		output.writeChars(msg);
+		output.writeObject(Codes.ADHOC_MESSAGE);
+		output.writeObject(msg);
+		output.flush();
+	}
+
+	public void sendPlayerUpdate(String name) throws IOException {
+		
+		output.writeObject(Codes.PLAYER_UPDATE);
+		output.writeObject(name);
+		output.flush();
 	}
 	
 }

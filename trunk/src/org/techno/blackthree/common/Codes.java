@@ -14,7 +14,8 @@ public class Codes {
 	
 	/**
 	 * When the Game is over, flag to be sent to client to
-	 * process the Game over summary
+	 * process the Game over summary.
+	 * A hashmap is sent
 	 * */
 	public static final String GAME_OVER = "GAME_OVER";
 	
@@ -64,4 +65,14 @@ public class Codes {
 	 * FLAG tells the client to accept a list of cards.
 	 * */
 	public static final String ACCEPT_HAND = "ACCEPT_HAND"; 
+	
+	/**
+	 * Flag tells the client that the player list had been updated.
+	 * */
+	public static final String PLAYER_UPDATE = "PLAYER_UPDATE";
+	
+	/**
+	 * Flag to send adhoc string messages to the client.
+	 * */
+	public static final String ADHOC_MESSAGE = "ADHOC_MESSAGE"; 
 }

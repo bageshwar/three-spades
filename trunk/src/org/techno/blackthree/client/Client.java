@@ -32,6 +32,17 @@ public class Client implements Runnable {
 	private boolean connectionOK = false;
 	private Player player;
 
+	
+	private boolean tired = false;
+	
+	public boolean isTired() {
+		return tired;
+	}
+
+	public void setTired(boolean tired) {
+		this.tired = tired;
+	}
+
 	public static void main(String s[]) {
 
 		Client client = null;
@@ -80,12 +91,12 @@ public class Client implements Runnable {
 
 	private Client(String host, int port) throws UnknownHostException, IOException {
 		clientSocket = new Socket(host, port);
-		player = new Player("Player# "+Math.random());
+		player = new Player("Player# "+(int)(Math.random()*200));
 	}
 
 	@Override
 	public void run() {
-
+		 
 		try {
 			initStreams();
 			
@@ -100,9 +111,12 @@ public class Client implements Runnable {
 			 * 
 			 * */
 			
-			
-			
-			
+				while(!isTired()){
+					Thread.sleep(200);			
+					String s = (String) input.readObject();
+					handleInput(s);
+				}
+				
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -110,11 +124,107 @@ public class Client implements Runnable {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}
 
-	private void initStreams() throws IOException, ClassNotFoundException {
+	/**
+	 * The actual orchestrator for client
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * */
+	private void handleInput(String s) throws IOException, ClassNotFoundException, InterruptedException {
+		
+		if(s==null)
+			return; //do nothing
+		
+		if(s.equals(Codes.GIVE_PLAYER))
+			initPlayerDetails();
+		else if (s.equals(Codes.PLAYER_UPDATE))
+			updatePlayersDetails();
+		else if(s.equals(Codes.BID))
+			placeBid();
+		else if(s.equals(Codes.BID_UPDATE))
+			updateBidDetails();
+		else if(s.equals(Codes.GAME_OVER))
+			gameOver();
+		else if(s.equals(Codes.ADHOC_MESSAGE))
+			processAdhocMessage();
+	}
+
+	private void processAdhocMessage() throws IOException, ClassNotFoundException {
+		String msg = (String) input.readObject();
+		System.out.println(msg);
+		
+	}
+
+	private void gameOver() {
+		//process the game over update
+		setTired(true);
+		
+	}
+
+	private void updateBidDetails() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void placeBid() throws IOException, InterruptedException, ClassNotFoundException {
+		Integer bid = (int)(Math.random()*100);
+		bid = bid+150;
+		
+		output.writeObject(bid);
+		waitForOK();
+		
+	}
+
+	
+	/**
+	 * Utility method to wait for the OK status.
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * */
+	private void waitForOK() throws IOException, ClassNotFoundException, InterruptedException{
+		String s ;
+		s = (String) input.readObject();
+		while(!s.equals(Codes.OK)){
+			Thread.sleep(200);
+			s = (String) input.readObject();
+		}
+	}
+	
+	/**
+	 * Update player details.
+	 *  A single string with the name of the player is expected.
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
+	 * */
+	private void updatePlayersDetails() throws IOException, ClassNotFoundException {
+		
+		String p = (String) input.readObject();
+		
+		System.out.println(p+" has joined the game.");
+		
+		//utput.wriite
+		//no need to notify server of ok
+		
+	}
+
+	private void initPlayerDetails() throws IOException, ClassNotFoundException, InterruptedException {
+		
+			output.writeObject(this.player);
+			output.flush();
+			waitForOK();
+			
+		
+	}
+
+	private void initStreams() throws IOException, ClassNotFoundException, InterruptedException {
 
 		System.out.println("Initing Client streams...");
 		input = new ObjectInputStream(clientSocket.getInputStream());
@@ -122,12 +232,18 @@ public class Client implements Runnable {
 
 		
 		 
-		Object s = input.readObject();
-		System.out.println("read "+s);
-		if (Codes.OK.equalsIgnoreCase(s.toString()))
-			System.out.println("Connection Successfull");
+		//Object s = input.readObject();
+		//System.out.println("read "+s);
+		/*if (Codes.OK.equalsIgnoreCase(s.toString()))
+			System.out.println("Connection Successfull");*/
 		
-		output.writeChars(Codes.OK);
+		waitForOK();
+		System.out.println("Connection Successful at client");
+		output.writeObject(Codes.OK);
+		output.flush();
 
+		System.out.println("Connection Successfull at server");
+		System.out.println("Hi, this is "+player.getName());
+		
 	}
 }
