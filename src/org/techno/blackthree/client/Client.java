@@ -8,7 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
+import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Player;
 import org.techno.blackthree.server.Server;
@@ -154,6 +156,15 @@ public class Client implements Runnable {
 			gameOver();
 		else if(s.equals(Codes.ADHOC_MESSAGE))
 			processAdhocMessage();
+		else if(s.equals(Codes.ACCEPT_HAND))
+			acceptDeal();
+	}
+
+	private void acceptDeal() throws IOException, ClassNotFoundException {
+		ArrayList<Card> deal = (ArrayList<Card>) input.readObject();
+		player.setCards(deal);
+		System.out.println(deal);
+		
 	}
 
 	private void processAdhocMessage() throws IOException, ClassNotFoundException {

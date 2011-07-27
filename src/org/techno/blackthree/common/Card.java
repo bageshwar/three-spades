@@ -25,5 +25,9 @@ public class Card implements Serializable{
 		return face;
 	}
 	
+	@Override
+	public String toString() {
 	
+		return suite.toString()+"-" + face.getFace();
+	}
 }

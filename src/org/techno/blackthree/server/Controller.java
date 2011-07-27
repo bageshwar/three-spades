@@ -5,8 +5,15 @@ package org.techno.blackthree.server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import org.techno.blackthree.common.Card;
+import org.techno.blackthree.common.Face;
 import org.techno.blackthree.common.InvalidDataStreamException;
+import org.techno.blackthree.common.Player;
+import org.techno.blackthree.common.Suite;
 
 /**
  * The server sends the control to this class, which does all the syncing
@@ -17,6 +24,16 @@ import org.techno.blackthree.common.InvalidDataStreamException;
 public class Controller implements Runnable {
 
 	private int size;
+
+	private boolean tired = false;
+	
+	public boolean isTired() {
+		return tired;
+	}
+
+	public void setTired(boolean tired) {
+		this.tired = tired;
+	}
 
 	/**
 	 * An array, since number of players is fixed.
@@ -33,6 +50,7 @@ public class Controller implements Runnable {
 			@Override
 			public void run() {
 
+				System.out.println("Player #"+index);
 				// create a process
 				Process p = null;
 				try {
@@ -69,13 +87,7 @@ public class Controller implements Runnable {
 	}
 
 	protected void sendPlayerUpdate( final String name) {
-		new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-
-			}
-		}).start();
 
 		for (Process p : players) {
 			
@@ -104,19 +116,20 @@ public class Controller implements Runnable {
 	@Override
 	public void run() {
 		sendMessage("All " + size + " players have joined.Starting the game...");
+		//while(!isTired()){
+		this.distributeDeal();
+		
+		//}
 	}
+	
+		
+	
 
 	/**
 	 * Broadcast a message to all the players.
 	 * */
 	synchronized private void sendMessage(final String msg) {
-		new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-
-			}
-		}).start();
 		for (Process p : players) {
 			if (p == null)
 				continue;
@@ -127,5 +140,64 @@ public class Controller implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void distributeDeal(){
+		
+		HashMap<Process,ArrayList<Card>> pack= new HashMap<Process,ArrayList<Card>>();
+		
+		Card[] freshPack = getFreshPack();
+		
+		int random = getRandomNumber();
+		
+		ArrayList<Card> deal = null;
+		
+		for(int i=0;i<freshPack.length/size;i++){
+			for(int j=0;j<size;j++){
+				while(freshPack[random]==null)
+					random = getRandomNumber();
+				
+				deal = pack.get(players[j]);
+				if(deal == null)
+					deal = new ArrayList<Card>();
+				deal.add(freshPack[random]);				
+				pack.put(players[j],deal );
+				
+				freshPack[random]=null;
+			}
+		}
+		
+		System.out.println(pack);
+		
+		//the deal is ready.. please distribute it.
+		
+		for (Process p : players) {
+			if (p == null)
+				continue;
+			try {
+				p.distributeDeal(pack.get(p));
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private int getRandomNumber(){
+		return (int)(Math.random()*48);
+	}
+	
+	private Card[] getFreshPack(){
+		
+		ArrayList<Card> pack = new ArrayList<Card>();
+		
+		for(Face face:Face.values()){
+			for(Suite suite:Suite.values()){
+			pack.add(new Card(suite, face));	
+			}
+		}
+		
+		return pack.toArray(new Card[]{});
+		
 	}
 }
