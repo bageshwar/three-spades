@@ -27,7 +27,7 @@ public class Server {
 			System.out.println("Listening on port # " + SERVER_PORT);
 			int counter = 0;
 			while (counter < controller.getSize()) {
-				System.out.println(counter+"...");
+				//System.out.println(counter+"...");
 				Socket s = socket.accept();
 				// add this to the list of processes.
 				controller.addPlayer(counter, s);
@@ -35,6 +35,7 @@ public class Server {
 				counter++;
 			}
 
+			socket.close();
 			System.out.println("All players have joined...");
 			new Thread(controller).start();
 
@@ -52,7 +53,7 @@ public class Server {
 	 * */
 	private Server(String[] args) {
 
-		int size = 8;
+		int size = 2;
 		try {
 			if (args != null && args.length != 0) {
 				size = Integer.parseInt(args[0]);				

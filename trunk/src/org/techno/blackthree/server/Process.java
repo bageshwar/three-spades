@@ -9,8 +9,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Player;
@@ -203,6 +206,46 @@ public class Process implements Runnable {
 			}
 		}
 
+	}
+
+	@Override
+	public String toString() {
+		return player.getName()+"@"+socket.getInetAddress().getCanonicalHostName();
+	}
+	
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((player == null) ? 0 : player.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Process other = (Process) obj;
+		if (player == null) {
+			if (other.player != null)
+				return false;
+		} else if (!player.equals(other.player))
+			return false;
+		return true;
+	}
+
+	public void distributeDeal(ArrayList<Card> list) throws IOException {
+		
+		output.writeObject(Codes.ACCEPT_HAND);
+		output.writeObject(list);
+		output.flush();
+		
 	}
 
 }
