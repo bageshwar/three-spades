@@ -43,8 +43,8 @@ public class Client implements Runnable {
 		this.tired = tired;
 	}
 
-	public static void main(String s[]) {
-
+	public static void main(String s[]) {		
+		
 		Client client = null;
 
 		if (s == null) {

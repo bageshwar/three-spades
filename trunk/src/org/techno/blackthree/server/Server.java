@@ -35,6 +35,7 @@ public class Server {
 				counter++;
 			}
 
+			System.out.println("All players have joined...");
 			new Thread(controller).start();
 
 		} catch (IOException e) {

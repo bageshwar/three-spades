@@ -17,14 +17,11 @@ import org.techno.blackthree.common.InvalidDataStreamException;
 public class Controller implements Runnable {
 
 	private int size;
-	
 
 	/**
 	 * An array, since number of players is fixed.
 	 * */
 	private Process[] players;
-	
-	
 
 	public int getSize() {
 		return size;
@@ -39,13 +36,18 @@ public class Controller implements Runnable {
 				// create a process
 				Process p = null;
 				try {
-					
-					//init the streams and get the player info
+
+					// init the streams and get the player info
 					p = new Process(s);
-					Controller.this.sendPlayerUpdate(p.getPlayer().getName());
 					
-					Controller.this.sendMessage("Waiting for "+(size-index)+"/"+size+" players ");
-				
+					
+					//send all the initial player's update to this player 					
+					p.sendAllPlayersUpdate(players);
+					p.sendMessage("Waiting for " + (size - index-1) + "/" + size + " players ");
+					
+					Controller.this.sendPlayerUpdate(p.getPlayer().getName());
+					Controller.this.sendMessage("Waiting for " + (size - index-1) + "/" + size + " players ");
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -56,6 +58,8 @@ public class Controller implements Runnable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				//adding this player to the list if all goes well.
 				if (p != null) {
 					players[index] = p;
 				}
@@ -64,26 +68,28 @@ public class Controller implements Runnable {
 
 	}
 
-	protected void sendPlayerUpdate(final String name) {
+	protected void sendPlayerUpdate( final String name) {
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				for (Process p : players) {
-					if(p==null)
-						continue;
-					try {
-						p.sendPlayerUpdate(name);
-					} catch (IOException e) {
-
-						e.printStackTrace();
-					}
-				}
 
 			}
 		}).start();
 
-		
+		for (Process p : players) {
+			
+			//to filter out null players and the currently joined player
+			if (p == null )
+				continue;
+			
+			try {
+				p.sendPlayerUpdate(name);
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public Controller(int size) {
@@ -100,7 +106,6 @@ public class Controller implements Runnable {
 		sendMessage("All " + size + " players have joined.Starting the game...");
 	}
 
-
 	/**
 	 * Broadcast a message to all the players.
 	 * */
@@ -109,20 +114,18 @@ public class Controller implements Runnable {
 
 			@Override
 			public void run() {
-				
-				for (Process p : players) {
-					if(p==null)
-						continue;
-					try {
-						p.sendMessage(msg);
-					} catch (IOException e) {
-
-						e.printStackTrace();
-					}
-				}
 
 			}
 		}).start();
+		for (Process p : players) {
+			if (p == null)
+				continue;
+			try {
+				p.sendMessage(msg);
+			} catch (IOException e) {
 
+				e.printStackTrace();
+			}
+		}
 	}
 }
