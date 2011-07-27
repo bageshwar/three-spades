@@ -21,8 +21,8 @@ import org.techno.blackthree.common.Player;
  */
 public class Process implements Runnable {
 
-	private static final int POLL_TIME = 3000; //in ms;
-	
+	private static final int POLL_TIME = 3000; // in ms;
+
 	/**
 	 * The player this process caters too.
 	 * */
@@ -30,10 +30,10 @@ public class Process implements Runnable {
 	private Socket socket;
 
 	private boolean tired = false;
-	
+
 	private HashMap<String, Integer> gameSummary;
-	private HashMap<String,Integer> roundSummary;
-	
+	private HashMap<String, Integer> roundSummary;
+
 	/**
 	 * This monitor blocks any thread to access this thread's info until the
 	 * stream and vital parameters have been successfully initialized.
@@ -62,24 +62,23 @@ public class Process implements Runnable {
 	 */
 	@Override
 	public void run() {
-		
+
 		System.out.println("New Process at server started for player ");
 
 		try {
-			
-			while(!tired){				
-				Thread.sleep(POLL_TIME);				
+
+			while (!tired) {
+				Thread.sleep(POLL_TIME);
 			}
-			
-			//sendOutHand();
-			
-			//sendRoundSummary();
-			
-			//we are tired.
-			//send out the summary to the player.
+
+			// sendOutHand();
+
+			// sendRoundSummary();
+
+			// we are tired.
+			// send out the summary to the player.
 			sendGameSummary();
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,25 +91,23 @@ public class Process implements Runnable {
 
 	public void sendOutHand() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void sendRoundSummary() {
-		
-		
+
 	}
 
 	/**
 	 * Summarize the results and push it to the player.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 * */
 	public void sendGameSummary() throws IOException {
 		output.writeObject(Codes.GAME_OVER);
 		output.writeObject(gameSummary);
 		output.flush();
 	}
-	
-	
 
 	public boolean isTired() {
 		return tired;
@@ -120,9 +117,9 @@ public class Process implements Runnable {
 		this.gameSummary = gameSummary;
 	}
 
-	
 	/**
-	 * Call this method to terminate this thread after a pack to end game safely and display the results.
+	 * Call this method to terminate this thread after a pack to end game safely
+	 * and display the results.
 	 * */
 	public void setTired(boolean tired) {
 		this.tired = tired;
@@ -130,39 +127,39 @@ public class Process implements Runnable {
 
 	private void initStreams() throws IOException, ClassNotFoundException {
 
-		System.out.println("Initing Server streams...");		
+		System.out.println("Initing Server streams...");
 		output = new ObjectOutputStream(socket.getOutputStream());
-		
+
 		input = new ObjectInputStream(socket.getInputStream());
 
 		output.writeObject(Codes.OK);
 		output.flush();
-		//System.out.println("wrote "+Codes.OK);
+		// System.out.println("wrote "+Codes.OK);
 		String s = (String) input.readObject();
-		if(Codes.OK.equalsIgnoreCase(s))
+		if (Codes.OK.equalsIgnoreCase(s))
 			System.out.println("Connection Successfull");
-		
+
 	}
 
 	private void initPlayerInfo() throws IOException, ClassNotFoundException, InvalidDataStreamException {
 		/**
 		 * Assuming that we have the streams with us now.
 		 * */
-		
+
 		output.writeObject(Codes.GIVE_PLAYER);
 		output.flush();
 		Object o = input.readObject();
-		try{
-		player = (Player) o;
-		System.out.println("Server recieved new player: "+ player.getName());
-		
-		output.writeObject(Codes.OK);
-		output.flush();
-		}catch(ClassCastException cce){
+		try {
+			player = (Player) o;
+			System.out.println("Server recieved new player: " + player.getName());
+
+			output.writeObject(Codes.OK);
+			output.flush();
+		} catch (ClassCastException cce) {
 			cce.printStackTrace();
 			throw new InvalidDataStreamException("Player Details expected");
 		}
-		
+
 		monitor = true;
 
 	}
@@ -172,23 +169,40 @@ public class Process implements Runnable {
 
 		initStreams();
 		initPlayerInfo();
-		
+
 		new Thread(this).start();
-		
+
 	}
 
-	synchronized public  void sendMessage(String msg) throws IOException{
-	
+	synchronized public void sendMessage(String msg) throws IOException {
+
 		output.writeObject(Codes.ADHOC_MESSAGE);
 		output.writeObject(msg);
 		output.flush();
 	}
 
 	public void sendPlayerUpdate(String name) throws IOException {
-		
+
 		output.writeObject(Codes.PLAYER_UPDATE);
 		output.writeObject(name);
 		output.flush();
 	}
-	
+
+	public void sendAllPlayersUpdate(Process[] players) {
+		for (Process p : players) {
+
+			// to filter out null players and the currently joined player
+			if (p == null)
+				continue;
+
+			try {
+				this.sendPlayerUpdate(p.getPlayer().getName());
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 }
