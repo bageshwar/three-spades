@@ -4,14 +4,11 @@
 package org.techno.blackthree.server;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
@@ -34,7 +31,14 @@ public class Process implements Runnable {
 
 	private boolean tired = false;
 
-	private HashMap<String, Integer> gameSummary;
+	/**
+	 * Scores of each player for each round.
+	 * */
+	private ArrayList<HashMap<String, Integer>> gameSummary;
+	
+	/**
+	 * Scores of current round
+	 * */
 	private HashMap<String, Integer> roundSummary;
 
 	/**
@@ -116,7 +120,7 @@ public class Process implements Runnable {
 		return tired;
 	}
 
-	public void setGameSummary(HashMap<String, Integer> gameSummary) {
+	public void setGameSummary(ArrayList<HashMap<String, Integer>> gameSummary) {
 		this.gameSummary = gameSummary;
 	}
 
@@ -240,11 +244,26 @@ public class Process implements Runnable {
 		return true;
 	}
 
+	/**
+	 * Send the client his deal
+	 * */
 	public void distributeDeal(ArrayList<Card> list) throws IOException {
 		
 		output.writeObject(Codes.ACCEPT_HAND);
 		output.writeObject(list);
 		output.flush();
+		
+	}
+
+	/**
+	 * Request the client to place a bid,
+	 * and then read it.
+	 * @throws ClassNotFoundException 
+	 * */
+	public void requestForBid() throws IOException, ClassNotFoundException {
+		output.writeObject(Codes.BID);
+		output.flush();
+		Integer bid = (Integer) input.readObject();
 		
 	}
 

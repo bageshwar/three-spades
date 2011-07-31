@@ -7,12 +7,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Face;
 import org.techno.blackthree.common.InvalidDataStreamException;
-import org.techno.blackthree.common.Player;
 import org.techno.blackthree.common.Suite;
 
 /**
@@ -50,7 +48,7 @@ public class Controller implements Runnable {
 			@Override
 			public void run() {
 
-				System.out.println("Player #"+index);
+				
 				// create a process
 				Process p = null;
 				try {
@@ -79,6 +77,7 @@ public class Controller implements Runnable {
 				
 				//adding this player to the list if all goes well.
 				if (p != null) {
+					System.out.println("Player # "+index+" joined the game");
 					players[index] = p;
 				}
 			}
@@ -117,13 +116,37 @@ public class Controller implements Runnable {
 	public void run() {
 		sendMessage("All " + size + " players have joined.Starting the game...");
 		//while(!isTired()){
-		this.distributeDeal();
+		
+		
+		try {
+						
+			this.distributeDeal();
+			this.requestForBid();
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		//}
 	}
 	
 		
 	
+
+	private void requestForBid() throws IOException, ClassNotFoundException {
+		for(Process p:players){
+			p.requestForBid();
+		}
+	}
 
 	/**
 	 * Broadcast a message to all the players.
@@ -142,7 +165,7 @@ public class Controller implements Runnable {
 		}
 	}
 	
-	private void distributeDeal(){
+	private void distributeDeal() throws InterruptedException{
 		
 		HashMap<Process,ArrayList<Card>> pack= new HashMap<Process,ArrayList<Card>>();
 		
@@ -167,13 +190,24 @@ public class Controller implements Runnable {
 			}
 		}
 		
-		System.out.println(pack);
+		//System.out.println(pack);
 		
 		//the deal is ready.. please distribute it.
 		
+		//sleep for some time, so that the latest player can get in sync
+		boolean allInitialized = false;
+		while(!allInitialized){
+			allInitialized = true;
+			for(Process p :players){
+				if(p==null){
+					allInitialized = false;				
+					//waiting for 2 seconds for all the players to initialise.
+					Thread.sleep(2000);
+				}
+			}
+		}
+		
 		for (Process p : players) {
-			if (p == null)
-				continue;
 			try {
 				p.distributeDeal(pack.get(p));
 			} catch (IOException e) {

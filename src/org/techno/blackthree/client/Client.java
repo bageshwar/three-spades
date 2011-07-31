@@ -163,7 +163,8 @@ public class Client implements Runnable {
 	private void acceptDeal() throws IOException, ClassNotFoundException {
 		ArrayList<Card> deal = (ArrayList<Card>) input.readObject();
 		player.setCards(deal);
-		System.out.println(deal);
+		System.out.println(deal);		
+		
 		
 	}
 
