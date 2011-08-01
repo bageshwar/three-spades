@@ -23,6 +23,12 @@ public class Round {
 	int nextPlayerToBid;
 	
 	/**
+	 * These players passed the bid to the next player.
+	 * When this would equal players#-1, we would have the king
+	 * */
+	private int playersPassed=0;
+	
+	/**
 	 * The player with whom the round will be started.
 	 * */
 	int initialPlayer;
@@ -37,7 +43,7 @@ public class Round {
 	 * */
 	Integer maxBid;
 	
-	Process king;
+	int king;
 	
 	/**	 
 	 * The triumph as declared by the king
@@ -49,8 +55,9 @@ public class Round {
 	 * */
 	Card partnerCards[];
 	
-	public Round(){
-		//partnerCards = new Card[3];
+	public Round(Process[] _players,int _initialPlayer ){
+		players = _players;
+		initialPlayer = _initialPlayer;
 	}
 
 	/**
@@ -86,14 +93,14 @@ public class Round {
 	/**
 	 * @return the king
 	 */
-	public Process getKing() {
+	public int getKing() {
 		return king;
 	}
 
 	/**
 	 * @param king the king to set
 	 */
-	public void setKing(Process king) {
+	public void setKing(int king) {
 		this.king = king;
 	}
 
@@ -126,21 +133,42 @@ public class Round {
 	}
 
 	/**
+	 * @param response The response of the player. {-1:passed,valid int:value}
 	 * @return the nextPlayerToBid. Returns -1, if the bid process needs to terminate.
 	 */
-	public int getNextPlayerToBid() {
+	public int getNextPlayerToBid(int response) {
+		//return nextPlayerToBid;
+		
+		//if player passed
+		if(response==-1){
+			playersPassed++;
+		}
+		
+		//if all players passed.
+		if(playersPassed==players.length-1){
+			return -1;
+		}
+		
+
+		/**
+		 * If this is a legitimate bid
+		 * check max bid, if yes, set king as current player, 
+		 * and reset players passed. 
+		 * */
+		if(maxBid<response){
+			maxBid = response;
+			king = nextPlayerToBid ;
+			playersPassed=0;
+		}
+		
+		if(maxBid==250)
+			return -1;
+		
+		nextPlayerToBid = (nextPlayerToBid+1)%players.length;		
 		return nextPlayerToBid;
 		
-		
-		
 	}
-
-	/**
-	 * @param nextPlayerToBid the nextPlayerToBid to set
-	 */
-	public void setNextPlayerToBid(int nextPlayerToBid) {
-		this.nextPlayerToBid = nextPlayerToBid;
-	}
+	
 
 	/**
 	 * @return the currentPlayerToPlay
@@ -168,11 +196,15 @@ public class Round {
 	 */
 	public void setInitialPlayer(int initialPlayer) {
 		this.initialPlayer = initialPlayer;
+		
+		this.setNextPlayerToBid(initialPlayer);
 	}
 	
 	
 	
-
+/**
+ * Set the initial player,and players
+ * */
 	
 	
 }
