@@ -36,6 +36,7 @@ public class Client implements Runnable {
 	private boolean connectionOK = false;
 	private Player player;
 	
+	private Integer maxBid;
 	
 	private int tempBidForTest=0;
 
@@ -187,7 +188,8 @@ public class Client implements Runnable {
 
 	private void updateBidDetails() throws IOException, ClassNotFoundException {
 		System.out.println("New King >> "+input.readObject());
-		System.out.println("His Bid >> "+input.readObject());
+		maxBid =  (Integer) input.readObject();
+		System.out.println("His Bid >> "+maxBid);
 		
 	}
 
@@ -197,6 +199,10 @@ public class Client implements Runnable {
 		
 		if(tempBidForTest++ == 2)
 			bid=-1;
+		
+		if(bid<maxBid)
+			bid=-1;
+		
 		System.out.println("Me, "+this.player.toString()+" am placing a bid of "+bid);
 		
 		output.writeObject(bid);
