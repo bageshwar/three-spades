@@ -3,6 +3,8 @@
  */
 package org.techno.blackthree.common;
 
+import org.techno.blackthree.server.Process;
+
 /**
  * 
  * This bean holds the data for a single round.
@@ -41,7 +43,7 @@ public class Round {
 	/**
 	 * The maximum bid for this round
 	 * */
-	Integer maxBid;
+	Integer maxBid = 0;
 	
 	int king;
 	
@@ -55,6 +57,10 @@ public class Round {
 	 * */
 	Card partnerCards[];
 	
+	/**
+	 * @param _players Players
+	 * @param _initialPlayer Index of initial Player for this round
+	 * */
 	public Round(Process[] _players,int _initialPlayer ){
 		players = _players;
 		initialPlayer = _initialPlayer;
@@ -138,11 +144,20 @@ public class Round {
 	 */
 	public int getNextPlayerToBid(int response) {
 		//return nextPlayerToBid;
+				
+		
+		//if this is the first bid, send the initial player's id to continue !!
+		if(response==0)
+			return this.getInitialPlayer();
+		
+		
 		
 		//if player passed
 		if(response==-1){
 			playersPassed++;
-		}
+			System.out.println(players[nextPlayerToBid]+" passed");
+		}else 
+			System.out.println(players[nextPlayerToBid]+" bid "+response);
 		
 		//if all players passed.
 		if(playersPassed==players.length-1){
@@ -159,10 +174,13 @@ public class Round {
 			maxBid = response;
 			king = nextPlayerToBid ;
 			playersPassed=0;
+			System.out.println("We have a new King: "+players[king].toString());
 		}
 		
-		if(maxBid==250)
+		//if this is the max bid
+		if(maxBid==250){
 			return -1;
+		}
 		
 		nextPlayerToBid = (nextPlayerToBid+1)%players.length;		
 		return nextPlayerToBid;
@@ -196,8 +214,8 @@ public class Round {
 	 */
 	public void setInitialPlayer(int initialPlayer) {
 		this.initialPlayer = initialPlayer;
-		
-		this.setNextPlayerToBid(initialPlayer);
+		this.setKing(initialPlayer);
+		//this.setNextPlayerToBid(initialPlayer);
 	}
 	
 	

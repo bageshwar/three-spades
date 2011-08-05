@@ -11,6 +11,7 @@ import java.util.HashMap;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Face;
 import org.techno.blackthree.common.InvalidDataStreamException;
+import org.techno.blackthree.common.Round;
 import org.techno.blackthree.common.Suite;
 
 /**
@@ -38,6 +39,10 @@ public class Controller implements Runnable {
 	 * */
 	private Process[] players;
 
+	private ArrayList<Round> rounds;
+	
+	private Round currentRound = null;
+	
 	public int getSize() {
 		return size;
 	}
@@ -107,6 +112,7 @@ public class Controller implements Runnable {
 
 		this.size = size;
 		players = new Process[size];
+		rounds = new ArrayList<Round>();
 	}
 
 	/**
@@ -114,12 +120,37 @@ public class Controller implements Runnable {
 	 * */
 	@Override
 	public void run() {
+		
+		//sleep for some time, so that the latest player can get in sync
+		boolean allInitialized = false;
+		while(!allInitialized){
+			allInitialized = true;
+			for(Process p :players){
+				if(p==null){
+					allInitialized = false;				
+					//waiting for 2 seconds for all the players to initialise.
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+			}
+		}
+		
 		sendMessage("All " + size + " players have joined.Starting the game...");
+		//this will remain in the loop
+		
 		//while(!isTired()){
 		
 		
 		try {
-						
+			
+			//if this is the first round, pass 0 as initial player, 
+			//else pass the last rounds first player as initial player
+			currentRound = new Round(players,(currentRound==null ? 0:currentRound.getInitialPlayer()+1%this.size ) );			
 			this.distributeDeal();
 			this.requestForBid();
 			
@@ -142,9 +173,20 @@ public class Controller implements Runnable {
 		
 	
 
-	private void requestForBid() throws IOException, ClassNotFoundException {
-		for(Process p:players){
+	private void requestForBid() throws IOException, ClassNotFoundException, InterruptedException {
+		/*for(Process p:players){
 			p.requestForBid();
+		}*/
+		//0 means need to start bid process
+		int nextPlayerToBid = currentRound.getNextPlayerToBid(0);
+		int bid = 0;
+		while(nextPlayerToBid!=-1){
+			bid = players[nextPlayerToBid].requestForBid();
+			nextPlayerToBid = currentRound.getNextPlayerToBid( bid	);
+			//send this bid update to all the other players too !
+			
+			Thread.sleep(5000);
+			
 		}
 	}
 
@@ -194,18 +236,12 @@ public class Controller implements Runnable {
 		
 		//the deal is ready.. please distribute it.
 		
-		//sleep for some time, so that the latest player can get in sync
-		boolean allInitialized = false;
-		while(!allInitialized){
-			allInitialized = true;
-			for(Process p :players){
-				if(p==null){
-					allInitialized = false;				
-					//waiting for 2 seconds for all the players to initialise.
-					Thread.sleep(2000);
-				}
-			}
-		}
+		
+		
+		
+		System.out.println("It appears that all players have joined");
+		for(Process p:players)
+			System.out.println(p.getPlayer().toString());
 		
 		for (Process p : players) {
 			try {
