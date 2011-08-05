@@ -161,6 +161,8 @@ public class Round {
 		
 		//if all players passed.
 		if(playersPassed==players.length-1){
+			System.out.println("All players passed.["+ players[king].toString()+" >> "+
+					maxBid+"]: start the game");
 			return -1;
 		}
 		
@@ -179,6 +181,7 @@ public class Round {
 		
 		//if this is the max bid
 		if(maxBid==250){
+			System.out.println("Found Ultimate Max bid["+ players[king].toString()+"]: start the game");
 			return -1;
 		}
 		

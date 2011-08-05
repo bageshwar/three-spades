@@ -185,8 +185,9 @@ public class Client implements Runnable {
 		
 	}
 
-	private void updateBidDetails() {
-		// TODO Auto-generated method stub
+	private void updateBidDetails() throws IOException, ClassNotFoundException {
+		System.out.println("New King >> "+input.readObject());
+		System.out.println("His Bid >> "+input.readObject());
 		
 	}
 
