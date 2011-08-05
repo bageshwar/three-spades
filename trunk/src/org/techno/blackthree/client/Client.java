@@ -19,6 +19,7 @@ import org.techno.blackthree.server.Server;
  * @author bageshwp
  * 
  */
+@SuppressWarnings("unused")
 public class Client implements Runnable {
 
 	Socket clientSocket = null;
@@ -27,12 +28,16 @@ public class Client implements Runnable {
 	 * This monitor blocks any thread to access this thread's info until the
 	 * stream and vital parameters have been successfully initialized.
 	 * */
+	
 	private boolean monitor = false;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	
 	private boolean connectionOK = false;
 	private Player player;
+	
+	
+	private int tempBidForTest=0;
 
 	
 	private boolean tired = false;
@@ -163,14 +168,14 @@ public class Client implements Runnable {
 	private void acceptDeal() throws IOException, ClassNotFoundException {
 		ArrayList<Card> deal = (ArrayList<Card>) input.readObject();
 		player.setCards(deal);
-		System.out.println(deal);		
+		System.out.println("Deal "+deal);		
 		
 		
 	}
 
 	private void processAdhocMessage() throws IOException, ClassNotFoundException {
 		String msg = (String) input.readObject();
-		System.out.println(msg);
+		System.out.println("<<ServerCast>> "+msg);
 		
 	}
 
@@ -188,6 +193,10 @@ public class Client implements Runnable {
 	private void placeBid() throws IOException, InterruptedException, ClassNotFoundException {
 		Integer bid = (int)(Math.random()*100);
 		bid = bid+150;
+		
+		if(tempBidForTest++ == 2)
+			bid=-1;
+		System.out.println("Me, "+this.player.toString()+" am placing a bid of "+bid);
 		
 		output.writeObject(bid);
 		waitForOK();

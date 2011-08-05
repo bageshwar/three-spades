@@ -260,11 +260,12 @@ public class Process implements Runnable {
 	 * and then read it.
 	 * @throws ClassNotFoundException 
 	 * */
-	public void requestForBid() throws IOException, ClassNotFoundException {
+	public int requestForBid() throws IOException, ClassNotFoundException {
 		output.writeObject(Codes.BID);
 		output.flush();
 		Integer bid = (Integer) input.readObject();
-		
+		output.writeObject(Codes.OK);
+		return bid;
 	}
 
 }
