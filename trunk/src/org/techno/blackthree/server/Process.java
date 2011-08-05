@@ -268,4 +268,13 @@ public class Process implements Runnable {
 		return bid;
 	}
 
+	public void sendBidUpdate(String name, int maxBid) throws IOException {
+		//first send the code, then the player name and then the bid
+		output.writeObject(Codes.BID_UPDATE);
+		output.writeObject(name);
+		output.writeObject(maxBid);
+		output.flush();
+		
+	}
+
 }

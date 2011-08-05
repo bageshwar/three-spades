@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.techno.blackthree.common.Card;
+import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Face;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Round;
@@ -183,11 +184,33 @@ public class Controller implements Runnable {
 		while(nextPlayerToBid!=-1){
 			bid = players[nextPlayerToBid].requestForBid();
 			nextPlayerToBid = currentRound.getNextPlayerToBid( bid	);
-			//send this bid update to all the other players too !
+			
+			/*send this bid update to all the other players too !
+			 * If the current bid is the maxBid			
+			 */
+			if(bid==currentRound.getMaxBid())				
+				this.sendBidUpdate(currentRound.getKing(),currentRound.getMaxBid());
 			
 			Thread.sleep(5000);
 			
 		}
+		
+		this.sendMessage("You have to play for "+players[currentRound.getKing()]+"'s bid of "+
+				currentRound.getMaxBid());
+	}
+
+	private void sendBidUpdate(int nextPlayerToBid, int maxBid) {
+		for (Process p : players) {
+			if (p == null)
+				continue;
+			try {
+				p.sendBidUpdate(players[nextPlayerToBid].getPlayer().getName(),maxBid);
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	/**
