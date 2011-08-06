@@ -14,6 +14,8 @@ import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Player;
+import org.techno.blackthree.common.Round;
+import org.techno.blackthree.common.RoundParameters;
 
 /**
  * @author bageshwp
@@ -268,11 +270,47 @@ public class Process implements Runnable {
 		return bid;
 	}
 
-	public void sendBidUpdate(String name, int maxBid) throws IOException {
-		//first send the code, then the player name and then the bid
+	public void sendBidUpdate(RoundParameters roundParams) throws IOException {
+		//Send the limited round parameters
 		output.writeObject(Codes.BID_UPDATE);
-		output.writeObject(name);
-		output.writeObject(maxBid);
+		output.writeObject(roundParams);
+		output.flush();
+		
+	}
+
+	/**
+	 * @param currentRound The current round,where the cards and triumph details will be set
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 * */
+	public void requestPartnerCardsAndTriumph(Round currentRound) throws IOException, ClassNotFoundException {
+		
+		//send request code
+		output.writeObject(Codes.KINGS_SPEECH);
+		output.flush();
+		
+		RoundParameters roundParams =  (RoundParameters) input.readObject();
+		/**
+		 * The above instance of RoundParameters contains 
+		 * only the triumph and partner cards.
+		 * */
+		
+		currentRound.setPartnerCards(roundParams.getPartnerCards());
+		currentRound.setTriumph(roundParams.getTriumph());
+		
+		//send the ok status.client waits for the same.
+		output.writeObject(Codes.OK);
+		output.flush();
+	}
+
+	public void sendPartnerCardsAndTriumph(RoundParameters roundParams) throws IOException {
+		/**
+		 * Send the code to update the round parameters
+		 * Send the round parameters.
+		 * These are the final set of round parameters.
+		 */
+		output.writeObject(Codes.ROUND_PARAMETERS_UPDATE);
+		output.writeObject(roundParams);
 		output.flush();
 		
 	}

@@ -11,6 +11,10 @@ import java.io.Serializable;
  */
 public class Card implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5145549398423800382L;
 	Suite suite;
 	Face face;
 	public Card(Suite suite, Face face) {

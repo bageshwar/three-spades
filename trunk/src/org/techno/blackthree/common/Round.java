@@ -11,9 +11,14 @@ import org.techno.blackthree.server.Process;
  * @author bageshwp
  *
  */
-public class Round {
+public class Round extends RoundParameters {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1049786175808878897L;
+
 	/**
 	 * Transient because its not required to be serialized.
 	 * */
@@ -40,22 +45,7 @@ public class Round {
 	 * */
 	int currentPlayerToPlay;
 	
-	/**
-	 * The maximum bid for this round
-	 * */
-	Integer maxBid = 0;
 	
-	int king;
-	
-	/**	 
-	 * The triumph as declared by the king
-	 * */
-	Suite triumph;
-	
-	/**
-	 * The partner cards declared by the king
-	 * */
-	Card partnerCards[];
 	
 	/**
 	 * @param _players Players
@@ -64,6 +54,8 @@ public class Round {
 	public Round(Process[] _players,int _initialPlayer ){
 		players = _players;
 		initialPlayer = _initialPlayer;
+		
+		
 	}
 
 	/**
@@ -79,65 +71,8 @@ public class Round {
 	public void setPlayers(Process[] players) {
 		this.players = players;
 	}
-
+		
 	
-
-	/**
-	 * @return the maxBid
-	 */
-	public Integer getMaxBid() {
-		return maxBid;
-	}
-
-	/**
-	 * @param maxBid the maxBid to set
-	 */
-	public void setMaxBid(Integer maxBid) {
-		this.maxBid = maxBid;
-	}
-
-	/**
-	 * @return the king
-	 */
-	public int getKing() {
-		return king;
-	}
-
-	/**
-	 * @param king the king to set
-	 */
-	public void setKing(int king) {
-		this.king = king;
-	}
-
-	/**
-	 * @return the triumph
-	 */
-	public Suite getTriumph() {
-		return triumph;
-	}
-
-	/**
-	 * @param triumph the triumph to set
-	 */
-	public void setTriumph(Suite triumph) {
-		this.triumph = triumph;
-	}
-
-	/**
-	 * @return the partnerCards
-	 */
-	public Card[] getPartnerCards() {
-		return partnerCards;
-	}
-
-	/**
-	 * @param partnerCards the partnerCards to set
-	 */
-	public void setPartnerCards(Card[] partnerCards) {
-		this.partnerCards = partnerCards;
-	}
-
 	/**
 	 * @param response The response of the player. {-1:passed,valid int:value}
 	 * @return the nextPlayerToBid. Returns -1, if the bid process needs to terminate.
@@ -176,6 +111,7 @@ public class Round {
 			maxBid = response;
 			king = nextPlayerToBid ;
 			playersPassed=0;
+			this.setKingPlayer(players[king].getPlayer().getName());
 			System.out.println("We have a new King: "+players[king].toString());
 		}
 		
@@ -220,12 +156,9 @@ public class Round {
 		this.setKing(initialPlayer);
 		//this.setNextPlayerToBid(initialPlayer);
 	}
-	
-	
-	
-/**
- * Set the initial player,and players
- * */
-	
-	
+
+
+	public RoundParameters getRoundParameters(){
+		return super.getThis();
+	}
 }
