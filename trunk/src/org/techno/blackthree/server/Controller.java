@@ -162,7 +162,7 @@ public class Controller implements Runnable {
 
 			// after the bid is complete, the king will declare the 3 partner
 			// cards, and triumph
-			players[currentRound.getKing()].requestPartnerCardsAndTriumph(currentRound);
+			players[currentRound.getRoundParameters().getKing()].requestPartnerCardsAndTriumph(currentRound);
 
 			// now we have the round parameters,server cast it to all.
 			this.sendPartnerCardsAndTriumph();
@@ -184,6 +184,7 @@ public class Controller implements Runnable {
 
 	private void sendPartnerCardsAndTriumph() throws IOException {
 
+		System.out.println("Round Parameters : "+currentRound.getRoundParameters().toString());
 		for (Process p : players) {
 			if (p == null)
 				continue;
@@ -208,7 +209,7 @@ public class Controller implements Runnable {
 			 * send this bid update to all the other players too ! If the
 			 * current bid is the maxBid
 			 */
-			if (bid == currentRound.getMaxBid())
+			if (bid == currentRound.getRoundParameters().getMaxBid())
 				this.sendBidUpdate(currentRound.getRoundParameters());
 
 			Thread.sleep(5000);
@@ -220,6 +221,8 @@ public class Controller implements Runnable {
 	}
 
 	private void sendBidUpdate(RoundParameters roundParams) throws IOException {
+		System.out.println("Sending Bid update");
+		System.out.println(roundParams);
 		for (Process p : players) {
 			if (p == null)
 				continue;

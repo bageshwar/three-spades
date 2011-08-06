@@ -3,6 +3,8 @@
  */
 package org.techno.blackthree.common;
 
+import java.io.Serializable;
+
 import org.techno.blackthree.server.Process;
 
 /**
@@ -11,7 +13,7 @@ import org.techno.blackthree.server.Process;
  * @author bageshwp
  *
  */
-public class Round extends RoundParameters {
+public class Round  implements Serializable{
 
 	
 	/**
@@ -19,6 +21,8 @@ public class Round extends RoundParameters {
 	 */
 	private static final long serialVersionUID = -1049786175808878897L;
 
+	RoundParameters roundParams = null;
+	
 	/**
 	 * Transient because its not required to be serialized.
 	 * */
@@ -54,7 +58,7 @@ public class Round extends RoundParameters {
 	public Round(Process[] _players,int _initialPlayer ){
 		players = _players;
 		initialPlayer = _initialPlayer;
-		
+		roundParams = new RoundParameters();
 		
 	}
 
@@ -96,8 +100,8 @@ public class Round extends RoundParameters {
 		
 		//if all players passed.
 		if(playersPassed==players.length-1){
-			System.out.println("All players passed.["+ players[king].toString()+" >> "+
-					maxBid+"]: start the game");
+			System.out.println("All players passed.["+ players[roundParams.getKing()].toString()+" >> "+
+					roundParams.getMaxBid()+"]: start the game");
 			return -1;
 		}
 		
@@ -107,17 +111,17 @@ public class Round extends RoundParameters {
 		 * check max bid, if yes, set king as current player, 
 		 * and reset players passed. 
 		 * */
-		if(maxBid<response){
-			maxBid = response;
-			king = nextPlayerToBid ;
+		if(roundParams.getMaxBid()<response){
+			roundParams.setMaxBid( response);
+			roundParams.setKing(nextPlayerToBid );
 			playersPassed=0;
-			this.setKingPlayer(players[king].getPlayer().getName());
-			System.out.println("We have a new King: "+players[king].toString());
+			roundParams.setKingPlayer(players[nextPlayerToBid].getPlayer().getName());
+			System.out.println("We have a new King: "+players[nextPlayerToBid].toString());
 		}
 		
 		//if this is the max bid
-		if(maxBid==250){
-			System.out.println("Found Ultimate Max bid["+ players[king].toString()+"]: start the game");
+		if(roundParams.getMaxBid()==250){
+			System.out.println("Found Ultimate Max bid["+ players[roundParams.getKing()].toString()+"]: start the game");
 			return -1;
 		}
 		
@@ -153,12 +157,12 @@ public class Round extends RoundParameters {
 	 */
 	public void setInitialPlayer(int initialPlayer) {
 		this.initialPlayer = initialPlayer;
-		this.setKing(initialPlayer);
+		roundParams.setKing(initialPlayer);
 		//this.setNextPlayerToBid(initialPlayer);
 	}
 
 
 	public RoundParameters getRoundParameters(){
-		return super.getThis();
+		return roundParams;
 	}
 }

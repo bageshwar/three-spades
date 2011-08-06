@@ -116,6 +116,7 @@ public class Process implements Runnable {
 		output.writeObject(Codes.GAME_OVER);
 		output.writeObject(gameSummary);
 		output.flush();
+		output.reset();
 	}
 
 	public boolean isTired() {
@@ -143,6 +144,7 @@ public class Process implements Runnable {
 
 		output.writeObject(Codes.OK);
 		output.flush();
+		output.reset();
 		// System.out.println("wrote "+Codes.OK);
 		String s = (String) input.readObject();
 		if (Codes.OK.equalsIgnoreCase(s))
@@ -157,6 +159,7 @@ public class Process implements Runnable {
 
 		output.writeObject(Codes.GIVE_PLAYER);
 		output.flush();
+		output.reset();
 		Object o = input.readObject();
 		try {
 			player = (Player) o;
@@ -164,6 +167,7 @@ public class Process implements Runnable {
 
 			output.writeObject(Codes.OK);
 			output.flush();
+			output.reset();
 		} catch (ClassCastException cce) {
 			cce.printStackTrace();
 			throw new InvalidDataStreamException("Player Details expected");
@@ -188,6 +192,7 @@ public class Process implements Runnable {
 		output.writeObject(Codes.ADHOC_MESSAGE);
 		output.writeObject(msg);
 		output.flush();
+		output.reset();
 	}
 
 	public void sendPlayerUpdate(String name) throws IOException {
@@ -195,6 +200,7 @@ public class Process implements Runnable {
 		output.writeObject(Codes.PLAYER_UPDATE);
 		output.writeObject(name);
 		output.flush();
+		output.reset();
 	}
 
 	public void sendAllPlayersUpdate(Process[] players) {
@@ -254,7 +260,7 @@ public class Process implements Runnable {
 		output.writeObject(Codes.ACCEPT_HAND);
 		output.writeObject(list);
 		output.flush();
-		
+		output.reset();
 	}
 
 	/**
@@ -267,14 +273,24 @@ public class Process implements Runnable {
 		output.flush();
 		Integer bid = (Integer) input.readObject();
 		output.writeObject(Codes.OK);
+		output.reset();
 		return bid;
 	}
 
 	public void sendBidUpdate(RoundParameters roundParams) throws IOException {
 		//Send the limited round parameters
 		output.writeObject(Codes.BID_UPDATE);
-		output.writeObject(roundParams);
+		
+		/**
+		 * Fix for serialization issues with same object
+		 * */
+		RoundParameters r = new RoundParameters();
+		r.setMaxBid(roundParams.getMaxBid());
+		r.setKingPlayer(roundParams.getKingPlayer());
+		
+		output.writeObject(r);
 		output.flush();
+		output.reset();
 		
 	}
 
@@ -288,6 +304,7 @@ public class Process implements Runnable {
 		//send request code
 		output.writeObject(Codes.KINGS_SPEECH);
 		output.flush();
+		output.reset();
 		
 		RoundParameters roundParams =  (RoundParameters) input.readObject();
 		/**
@@ -295,12 +312,13 @@ public class Process implements Runnable {
 		 * only the triumph and partner cards.
 		 * */
 		
-		currentRound.setPartnerCards(roundParams.getPartnerCards());
-		currentRound.setTriumph(roundParams.getTriumph());
+		currentRound.getRoundParameters().setPartnerCards(roundParams.getPartnerCards());
+		currentRound.getRoundParameters().setTriumph(roundParams.getTriumph());
 		
 		//send the ok status.client waits for the same.
 		output.writeObject(Codes.OK);
 		output.flush();
+		output.reset();
 	}
 
 	public void sendPartnerCardsAndTriumph(RoundParameters roundParams) throws IOException {
@@ -310,8 +328,10 @@ public class Process implements Runnable {
 		 * These are the final set of round parameters.
 		 */
 		output.writeObject(Codes.ROUND_PARAMETERS_UPDATE);
+		System.out.println(roundParams);
 		output.writeObject(roundParams);
 		output.flush();
+		output.reset();
 		
 	}
 

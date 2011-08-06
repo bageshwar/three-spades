@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
@@ -126,16 +126,20 @@ public class Client implements Runnable {
 
 			while (!isTired()) {
 				Thread.sleep(500);
-				try{
-				String s = (String) input.readObject();				
-				handleInput(s);
-				}catch(OptionalDataException e){
-					System.out.println("OptionalDataException "+e.length+":"+e.eof);
-					
-				}
-				
-				//TODO: catch inside the while block to avoid blocking the application 
-				//for selected exceptions 
+				Object o = null;
+				String s;
+				try {
+					o = input.readObject();
+					s = (String) o;
+					handleInput(s);
+				} catch (OptionalDataException e) {
+					System.out.println(o);
+					System.out.println("OptionalDataException " + e.length + ":" + e.eof);
+					e.printStackTrace();
+				} catch (StreamCorruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 			
 			}
 
 		} catch (IOException e) {
@@ -170,7 +174,7 @@ public class Client implements Runnable {
 		else if (s.equals(Codes.BID))
 			placeBid();
 		else if (s.equals(Codes.BID_UPDATE)) // TODO: remove bid update and use
-											// round parameters update
+			// round parameters update
 			updateBidDetails();
 		else if (s.equals(Codes.GAME_OVER))
 			gameOver();
@@ -185,15 +189,11 @@ public class Client implements Runnable {
 	}
 
 	private void updateRoundDetails() throws IOException, ClassNotFoundException {
-		
+
 		roundParams = (RoundParameters) input.readObject();
-		
-		System.out.println("========Round Details========");
-		System.out.println(roundParams.getKingPlayer()+"==>"+roundParams.getMaxBid());
-		System.out.println(roundParams.getTriumph());
-		System.out.println(Arrays.toString(roundParams.getPartnerCards()));
-		
-		
+
+		System.out.println(player.getName() + "\t" + roundParams);
+
 	}
 
 	private void sendPartnerCardsAndTriumph() throws IOException, ClassNotFoundException, InterruptedException {
@@ -211,6 +211,7 @@ public class Client implements Runnable {
 		roundParams.setPartnerCards(partnerCards);
 
 		output.writeObject(roundParams);
+		output.reset();
 		waitForOK();
 
 	}
@@ -220,7 +221,7 @@ public class Client implements Runnable {
 		Object o = input.readObject();
 		ArrayList<Card> deal = (ArrayList<Card>) o;
 		player.setCards(deal);
-		System.out.println(player.getName()+">> Deal " + deal);
+		System.out.println(player.getName() + ">> Deal " + deal);
 
 	}
 
@@ -243,7 +244,7 @@ public class Client implements Runnable {
 		 * maxBid player's name
 		 * */
 
-		System.out.println("New King >> " + roundParams.getKingPlayer() + " bid >> " + roundParams.getMaxBid());
+		System.out.println(player.getName() + ">> Bid Update: " + roundParams);
 
 	}
 
@@ -262,6 +263,7 @@ public class Client implements Runnable {
 		System.out.println("Me, " + this.player.toString() + " am placing a bid of " + bid);
 
 		output.writeObject(bid);
+		output.reset();
 		waitForOK();
 
 	}
@@ -306,6 +308,7 @@ public class Client implements Runnable {
 
 		output.writeObject(this.player);
 		output.flush();
+		output.reset();
 		waitForOK();
 
 	}
@@ -327,6 +330,7 @@ public class Client implements Runnable {
 		System.out.println("Connection Successful at client");
 		output.writeObject(Codes.OK);
 		output.flush();
+		output.reset();
 
 		System.out.println("Connection Successfull at server");
 		System.out.println("Hi, this is " + player.getName());
