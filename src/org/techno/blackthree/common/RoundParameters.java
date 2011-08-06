@@ -1,6 +1,7 @@
 package org.techno.blackthree.common;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class RoundParameters implements Serializable{
 
@@ -80,6 +81,12 @@ public class RoundParameters implements Serializable{
 	 * */
 	public RoundParameters getThis(){
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+	
+		return kingPlayer+">>"+maxBid+", Triumph "+triumph+", Partner Cards "+Arrays.toString(partnerCards);
 	}
 	
 }
