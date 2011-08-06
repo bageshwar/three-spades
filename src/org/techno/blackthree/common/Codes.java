@@ -58,6 +58,7 @@ public class Codes {
 	
 	/**
 	 * Flag tells the client of an updated bid.
+	 * Consider using @link ROUND_PARAMETERS_UPDATE
 	 * */
 	public static final String BID_UPDATE = "BID_UPDATE";
 	
@@ -74,5 +75,15 @@ public class Codes {
 	/**
 	 * Flag to send adhoc string messages to the client.
 	 * */
-	public static final String ADHOC_MESSAGE = "ADHOC_MESSAGE"; 
+	public static final String ADHOC_MESSAGE = "ADHOC_MESSAGE";
+	
+	/**
+	 * Flag which tells the king to declare the triumph and 3 player cards.
+	 * */
+	public static final String KINGS_SPEECH = "KINGS_SPEECH";
+	
+	/**
+	 * Flag which tells the client to accept the triumph and 3 player cards.
+	 * */
+	public static final String ROUND_PARAMETERS_UPDATE = "ROUND_PARAMETERS_UPDATE"; 
 }

@@ -15,6 +15,10 @@ import java.io.Serializable;
  */
 public class Move implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1950757898598108115L;
 	private Card card;
 
 	public Card getCard() {

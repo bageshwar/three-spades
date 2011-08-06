@@ -14,6 +14,10 @@ import java.util.HashMap;
 public class Board implements Serializable {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1175337023034931749L;
+	/**
 	 * This should have the capability to return the net score
 	 * based on partnerships.
 	 * */

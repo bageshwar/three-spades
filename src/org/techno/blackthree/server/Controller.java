@@ -12,6 +12,7 @@ import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Face;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Round;
+import org.techno.blackthree.common.RoundParameters;
 import org.techno.blackthree.common.Suite;
 
 /**
@@ -39,6 +40,7 @@ public class Controller implements Runnable {
 	 * */
 	private Process[] players;
 
+	// Added for future use.
 	private ThreadGroup threadGroup = null;
 
 	private ArrayList<Round> rounds;
@@ -64,12 +66,10 @@ public class Controller implements Runnable {
 
 					// send all the initial player's update to this player
 					p.sendAllPlayersUpdate(players);
-					p.sendMessage("Waiting for " + (size - index - 1) + "/"
-							+ size + " players ");
+					p.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
 
 					Controller.this.sendPlayerUpdate(p.getPlayer().getName());
-					Controller.this.sendMessage("Waiting for "
-							+ (size - index - 1) + "/" + size + " players ");
+					Controller.this.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -84,8 +84,7 @@ public class Controller implements Runnable {
 
 				// adding this player to the list if all goes well.
 				if (p != null) {
-					System.out
-							.println("Player # " + index + " joined the game");
+					System.out.println("Player # " + index + " joined the game");
 					players[index] = p;
 				}
 			}
@@ -143,25 +142,32 @@ public class Controller implements Runnable {
 			}
 		}
 
-		sendMessage("All " + size + " players have joined.Starting the game...");
-		// this will remain in the loop
-
-		// while(!isTired()){
+		
 
 		try {
 
+			sendMessage("All " + size + " players have joined.Starting the game...");
+			
+			// this will remain in the loop
+
+			// while(!isTired()){
+
+			
 			// if this is the first round, pass 0 as initial player,
 			// else pass the last rounds first player as initial player
-			currentRound = new Round(players, (currentRound == null ? 0
-					: currentRound.getInitialPlayer() + 1 % this.size));
+			currentRound = new Round(players, (currentRound == null ? 0 : currentRound.getInitialPlayer() + 1
+					% this.size));
 			this.distributeDeal();
 			this.requestForBid();
 
 			// after the bid is complete, the king will declare the 3 partner
 			// cards, and triumph
-			players[currentRound.getKing()]
-					.requestPartnerCardsAndTriumph(currentRound);
+			players[currentRound.getKing()].requestPartnerCardsAndTriumph(currentRound);
 
+			// now we have the round parameters,server cast it to all.
+			this.sendPartnerCardsAndTriumph();
+
+			// }
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -173,11 +179,21 @@ public class Controller implements Runnable {
 			e.printStackTrace();
 		}
 
-		// }
+		
 	}
 
-	private void requestForBid() throws IOException, ClassNotFoundException,
-			InterruptedException {
+	private void sendPartnerCardsAndTriumph() throws IOException {
+
+		for (Process p : players) {
+			if (p == null)
+				continue;
+
+			p.sendPartnerCardsAndTriumph(currentRound.getRoundParameters());
+		}
+
+	}
+
+	private void requestForBid() throws IOException, ClassNotFoundException, InterruptedException {
 		/*
 		 * for(Process p:players){ p.requestForBid(); }
 		 */
@@ -193,51 +209,42 @@ public class Controller implements Runnable {
 			 * current bid is the maxBid
 			 */
 			if (bid == currentRound.getMaxBid())
-				this.sendBidUpdate(currentRound.getKing(), currentRound
-						.getMaxBid());
+				this.sendBidUpdate(currentRound.getRoundParameters());
 
 			Thread.sleep(5000);
 
 		}
 
-		this.sendMessage("You have to play for "
-				+ players[currentRound.getKing()] + "'s bid of "
-				+ currentRound.getMaxBid());
+		/*this.sendMessage("You have to play for " + players[currentRound.getKing()] + "'s bid of "
+				+ currentRound.getMaxBid());*/
 	}
 
-	private void sendBidUpdate(int nextPlayerToBid, int maxBid) {
+	private void sendBidUpdate(RoundParameters roundParams) throws IOException {
 		for (Process p : players) {
 			if (p == null)
 				continue;
-			try {
-				p.sendBidUpdate(players[nextPlayerToBid].getPlayer().getName(),
-						maxBid);
-			} catch (IOException e) {
 
-				e.printStackTrace();
-			}
+			p.sendBidUpdate(roundParams);
 		}
 
 	}
 
 	/**
 	 * Broadcast a message to all the players.
+	 * 
+	 * @throws IOException
 	 * */
-	synchronized private void sendMessage(final String msg) {
+	synchronized private void sendMessage(final String msg) throws IOException {
 
 		for (Process p : players) {
 			if (p == null)
 				continue;
-			try {
-				p.sendMessage(msg);
-			} catch (IOException e) {
 
-				e.printStackTrace();
-			}
+			p.sendMessage(msg);
 		}
 	}
 
-	private void distributeDeal() throws InterruptedException {
+	private void distributeDeal() throws InterruptedException, IOException {
 
 		HashMap<Process, ArrayList<Card>> pack = new HashMap<Process, ArrayList<Card>>();
 
@@ -271,12 +278,9 @@ public class Controller implements Runnable {
 			System.out.println(p.getPlayer().toString());
 
 		for (Process p : players) {
-			try {
-				p.distributeDeal(pack.get(p));
-			} catch (IOException e) {
 
-				e.printStackTrace();
-			}
+			p.distributeDeal(pack.get(p));
+
 		}
 	}
 

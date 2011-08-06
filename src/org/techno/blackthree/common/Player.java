@@ -13,6 +13,10 @@ import java.util.ArrayList;
 public class Player implements Serializable {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4468181617287557415L;
+	/**
 	 * The set of cards this player has.
 	 * */
 	private ArrayList<Card> cards;
