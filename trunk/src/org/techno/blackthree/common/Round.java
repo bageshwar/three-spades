@@ -226,17 +226,17 @@ public class Round implements Serializable {
 
 		int currentPlayerToPlay = roundParams.getKing();
 		int len = players.length;
+		int noOfBoards = 48 / len;
 		Move move = null;
-		for (int j = 0; j < 48 / len; j++) {
+		for (int j = 0; j < noOfBoards; j++) {
+			// init board
+			currentBoard = new Board();
+			// add this board to the list of boards.
+			boards.add(currentBoard);
 			for (int i = 0; i < len; i++) {
-				// init board
-				currentBoard = new Board();
-
-				// add this board to the list of boards.
-				boards.add(currentBoard);
-
 				// iterate players.length no of times, access players by idx.
 				move = players[currentPlayerToPlay].makeAMove();
+				System.out.println("Player moved" + players[currentPlayerToPlay] + " " + move);
 				currentBoard.addMove(players[currentPlayerToPlay], move);
 				// -->next player
 				currentPlayerToPlay = (currentPlayerToPlay + 1) % len;
@@ -247,11 +247,15 @@ public class Round implements Serializable {
 					e.printStackTrace();
 				}
 
-				// summarize the board
-				currentBoard.summarize();
-				// reset the current board
-				currentBoard = null;
 			}
+			// summarize the board
+			currentBoard.summarize();
+			
+			System.out.println(currentBoard.getMoves());
+			currentPlayerToPlay = currentBoard.getWinner();
+			// reset the current board
+			currentBoard = null;
+
 		}
 		summarizeRound();
 
@@ -259,6 +263,7 @@ public class Round implements Serializable {
 
 	private void summarizeRound() {
 		// TODO Auto-generated method stub summarizeRound
+		System.out.println("Round summary");
 
 	}
 
