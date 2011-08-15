@@ -29,5 +29,9 @@ public class Move implements Serializable{
 		card = c;
 	}
 	
+	@Override
+	public String toString(){
+		return card.toString();		
+	}
 	
 }

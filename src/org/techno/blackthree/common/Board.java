@@ -44,8 +44,8 @@ public class Board implements Serializable {
 		this.moves = moves;
 	}
 
-	public Process getWinner() {
-		return winner;
+	public int getWinner() {
+		return 0;
 	}
 
 	public void setWinner(Process winner) {
@@ -73,7 +73,7 @@ public class Board implements Serializable {
 	 * @param p The player which has moved 
 	 * @param m The move.
 	 * */
-	public void addMove(Process p,Move m){
+	public void addMove(Process p,Move m){		
 		moves.put(p, m);
 	}
 
@@ -81,8 +81,12 @@ public class Board implements Serializable {
 	 * Iterate through the moves, and 
 	 * */
 	public void summarize() {
+		//System.out.println("summarizing the board");
+		System.out.println(this.moves);
+		//TODO: implement summarize	
 		
-	//TODO: implement summarize	
+		
+		//get the round parameters, iterate fromt the start
 	}
 	
 	

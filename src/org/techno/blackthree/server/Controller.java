@@ -218,7 +218,7 @@ public class Controller implements Runnable {
 			if (bid == currentRound.getRoundParameters().getMaxBid())
 				this.sendBidUpdate(currentRound.getRoundParameters());
 
-			Thread.sleep(5000);
+			Thread.sleep(500);
 
 		}
 

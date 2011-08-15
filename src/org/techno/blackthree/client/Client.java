@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
+import org.techno.blackthree.common.Move;
 import org.techno.blackthree.common.Player;
 import org.techno.blackthree.common.RoundParameters;
 import org.techno.blackthree.common.Suite;
@@ -196,7 +197,9 @@ public class Client implements Runnable {
 		//TODO: Get the card from the user
 		int idx = (int)(Math.random()*player.getCards().size());
 		
-		output.writeObject(player.getCards().get(idx));		
+		Move m = new Move(player.getCards().get(idx));
+		
+		output.writeObject(m);		
 		output.flush();
 		output.reset();
 		player.getCards().remove(idx);
