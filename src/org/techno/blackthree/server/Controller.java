@@ -72,13 +72,13 @@ public class Controller implements Runnable {
 					Controller.this.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				} catch (InvalidDataStreamException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 
@@ -134,7 +134,7 @@ public class Controller implements Runnable {
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 					}
 					break;
@@ -171,16 +171,17 @@ public class Controller implements Runnable {
 			
 			//everybody should start playing now, starting from king and moving forward thereafter.
 			
+			currentRound.playBoard();
 			
 			// }
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

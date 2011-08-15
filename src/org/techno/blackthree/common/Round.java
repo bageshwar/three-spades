@@ -3,6 +3,7 @@
  */
 package org.techno.blackthree.common;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -38,7 +39,7 @@ public class Round implements Serializable {
 	 * Member to hold individual deals
 	 * */
 	private ArrayList<Board> boards;
-	
+
 	private Board currentBoard;
 
 	/**
@@ -51,11 +52,6 @@ public class Round implements Serializable {
 	 * The player with whom the round will be started.
 	 * */
 	int initialPlayer;
-
-	/**
-	 * The next player to play his card
-	 * */
-	int currentPlayerToPlay;
 
 	/**
 	 * Partners of the king
@@ -77,7 +73,7 @@ public class Round implements Serializable {
 		players = _players;
 		initialPlayer = _initialPlayer;
 		roundParams = new RoundParameters(players.length);
-		boards = new ArrayList<Board>(); 
+		boards = new ArrayList<Board>();
 	}
 
 	/**
@@ -147,21 +143,6 @@ public class Round implements Serializable {
 	}
 
 	/**
-	 * @return the currentPlayerToPlay
-	 */
-	public int getCurrentPlayerToPlay() {
-		return currentPlayerToPlay;
-	}
-
-	/**
-	 * @param currentPlayerToPlay
-	 *            the currentPlayerToPlay to set
-	 */
-	public void setCurrentPlayerToPlay(int currentPlayerToPlay) {
-		this.currentPlayerToPlay = currentPlayerToPlay;
-	}
-
-	/**
 	 * @return the initialPlayer
 	 */
 	public int getInitialPlayer() {
@@ -187,49 +168,98 @@ public class Round implements Serializable {
 	 * */
 	public void assignPartners() {
 
+		// this is an array list,because the no of partners might not be equal
+		// to the
+		// number of partner cards.
 		kingsMen = new ArrayList<Process>();
 		commoners = new ArrayList<Process>();
 		for (Card c : roundParams.getPartnerCards()) {
 			for (Process p : players) {
-				if(p.getPlayer().getCards().contains(c)){
-					//this is kings partner
+				if (p.getPlayer().getCards().contains(c)) {
+					// this is kings partner
 					kingsMen.add(p);
 				}
 			}
 		}
-		//now the kings men have been decided. time to set the commoners
-		for(Process p:players){
-			if(!kingsMen.contains(p))
+		// now the kings men have been decided. time to set the commoners
+		for (Process p : players) {
+			if (!kingsMen.contains(p))
 				commoners.add(p);
 		}
 
 	}
-	
-	
-	
+
 	/**
-	 * Take the move from the board, process it.
-	 * And set winner player and score for that board.
+	 * Take the move from the board, process it. And set winner player and score
+	 * for that board.
 	 * */
-	public void processBoard(){
-		
+	public void processBoard() {
+
 		int boardScore = 0;
 		int maxTriumph = 0;
 		int maxCard = 0;
 		int temp;
 		Process leadingPlayer = null;
 		Move m = null;
-		for(Process p:currentBoard.getMoves().keySet()){
+		for (Process p : currentBoard.getMoves().keySet()) {
 			m = currentBoard.getMoves().get(p);
-			boardScore+=m.getCard().getValue();
-			//this is the internal value of the card
+			boardScore += m.getCard().getValue();
+			// this is the internal value of the card
 			temp = m.getCard().getInternalValue();
-			
-			//need to check what was the initial suite.
-			//if this does not match initial suite,
-			//check if this is triumph, if so handle triumph,
-			//else do not compare the internal value
+
+			// need to check what was the initial suite.
+			// if this does not match initial suite,
+			// check if this is triumph, if so handle triumph,
+			// else do not compare the internal value
 		}
+
 	}
-	
+
+	/**
+	 * Request the King, to move, and then each player to move , Evaluate the
+	 * result. Assign the scores. Move to the next round.
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 * */
+	public void playBoard() throws IOException, ClassNotFoundException {
+
+		int currentPlayerToPlay = roundParams.getKing();
+		int len = players.length;
+		Move move = null;
+		for (int j = 0; j < 48 / len; j++) {
+			for (int i = 0; i < len; i++) {
+				// init board
+				currentBoard = new Board();
+
+				// add this board to the list of boards.
+				boards.add(currentBoard);
+
+				// iterate players.length no of times, access players by idx.
+				move = players[currentPlayerToPlay].makeAMove();
+				currentBoard.addMove(players[currentPlayerToPlay], move);
+				// -->next player
+				currentPlayerToPlay = (currentPlayerToPlay + 1) % len;
+
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				// summarize the board
+				currentBoard.summarize();
+				// reset the current board
+				currentBoard = null;
+			}
+		}
+		summarizeRound();
+
+	}
+
+	private void summarizeRound() {
+		// TODO Auto-generated method stub summarizeRound
+
+	}
+
 }

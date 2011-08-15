@@ -70,10 +70,8 @@ public class Client implements Runnable {
 				try {
 					client = new Client(s[0]);
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+				} catch (IOException e) {					
 					e.printStackTrace();
 				}
 			} else
@@ -82,13 +80,13 @@ public class Client implements Runnable {
 				try {
 					client = new Client(s[0], Integer.parseInt(s[1]));
 				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			} else {
@@ -137,19 +135,19 @@ public class Client implements Runnable {
 					System.out.println("OptionalDataException " + e.length + ":" + e.eof);
 					e.printStackTrace();
 				} catch (StreamCorruptedException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				} 			
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -186,6 +184,22 @@ public class Client implements Runnable {
 			sendPartnerCardsAndTriumph();
 		else if (s.equals(Codes.ROUND_PARAMETERS_UPDATE))
 			updateRoundDetails();
+		else if (s.equals(Codes.MOVE))
+			makeAMove();
+	}
+
+	private void makeAMove() throws IOException {
+		
+		//generate a random no,
+		//and send the same as move. Remove the same from the list.
+		
+		//TODO: Get the card from the user
+		int idx = (int)(Math.random()*player.getCards().size());
+		
+		output.writeObject(player.getCards().get(idx));		
+		output.flush();
+		output.reset();
+		player.getCards().remove(idx);
 	}
 
 	private void updateRoundDetails() throws IOException, ClassNotFoundException {
