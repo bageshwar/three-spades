@@ -13,6 +13,7 @@ import java.util.HashMap;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
+import org.techno.blackthree.common.Move;
 import org.techno.blackthree.common.Player;
 import org.techno.blackthree.common.Round;
 import org.techno.blackthree.common.RoundParameters;
@@ -80,7 +81,7 @@ public class Process implements Runnable {
 				Thread.sleep(POLL_TIME);
 			}
 
-			// sendOutHand();
+			 sendOutHand();
 
 			// sendRoundSummary();
 
@@ -89,17 +90,18 @@ public class Process implements Runnable {
 			sendGameSummary();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
 	}
 
+	
 	public void sendOutHand() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -333,6 +335,25 @@ public class Process implements Runnable {
 		output.flush();
 		output.reset();
 		
+	}
+
+	/**
+	 * Request the player to make a move.
+	 * @return The move
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 * */
+	public Move makeAMove() throws IOException, ClassNotFoundException {
+		
+		//send the make a move code,
+		//get the move
+				
+		output.writeObject(Codes.MOVE);		
+		output.flush();
+		output.reset();
+		Move m = (Move) input.readObject();
+		
+		return m;
 	}
 
 }
