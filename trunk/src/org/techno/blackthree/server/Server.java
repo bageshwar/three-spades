@@ -3,7 +3,6 @@ package org.techno.blackthree.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * @author bageshwp
@@ -14,6 +13,7 @@ public class Server {
 	public final static int SERVER_PORT = 12346;
 
 	public static void main(String args[]) {
+		@SuppressWarnings("unused")
 		Server server = new Server(args);
 		
 	}

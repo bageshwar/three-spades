@@ -41,6 +41,19 @@ public enum Face {
 	}
 	
 
+	public int getInternalValue(){
+		if(face.equals("10"))
+			return 10;
+		else if(face.equals("J"))
+			return 11;
+		else if(face.equals("Q"))
+			return 12;
+		else if(face.equals("K"))
+			return 13;
+		else if(face.equals("A"))
+			return 14;
+		else return value;
+	}
 	private int value;
 
 }

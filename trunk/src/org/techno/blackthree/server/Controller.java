@@ -167,6 +167,11 @@ public class Controller implements Runnable {
 			// now we have the round parameters,server cast it to all.
 			this.sendPartnerCardsAndTriumph();
 
+			currentRound.assignPartners();
+			
+			//everybody should start playing now, starting from king and moving forward thereafter.
+			
+			
 			// }
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

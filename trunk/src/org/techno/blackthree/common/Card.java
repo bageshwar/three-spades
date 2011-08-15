@@ -11,6 +11,8 @@ import java.io.Serializable;
  */
 public class Card implements Serializable{
 
+	private int internalValue = 0;
+	
 	/**
 	 * 
 	 */
@@ -21,12 +23,24 @@ public class Card implements Serializable{
 		
 		this.suite = suite;
 		this.face = face;
+		//to avoid calculating this again
+		internalValue = face.getInternalValue();
 	}
 	public Suite getSuite() {
 		return suite;
 	}
 	public Face getFace() {
 		return face;
+	}
+	
+	public int getValue(){
+		if(this.suite.equals(Suite.SPADE) && this.face.equals(Face.THREE))
+			return 30;
+		return face.getValue();
+	}
+	
+	public int getInternalValue(){
+		return internalValue;
 	}
 	
 	@Override

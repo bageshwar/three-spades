@@ -38,11 +38,16 @@ public class RoundParameters implements Serializable{
 	protected Card partnerCards[];
 
 	
-	public RoundParameters(){
+	public RoundParameters(int size){
 		//since only 3 partner cards can be set.		
-		partnerCards = new Card[3];
+		partnerCards = new Card[(size/2)-1];
 		
 	}
+	
+	/**
+	 * Empty constructor
+	 * */
+	public RoundParameters(){}
 	
 	public Integer getMaxBid() {
 		return maxBid;
