@@ -134,6 +134,8 @@ public class Client implements Runnable {
 				} catch (OptionalDataException e) {
 					System.out.println(o);
 					System.out.println("OptionalDataException " + e.length + ":" + e.eof);
+					input.reset();
+					output.reset();
 					e.printStackTrace();
 				} catch (StreamCorruptedException e) {
 					
