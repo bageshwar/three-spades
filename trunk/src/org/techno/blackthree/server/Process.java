@@ -32,6 +32,10 @@ public class Process implements Runnable {
 	private Player player;
 	private Socket socket;
 
+	private int sequenceNo;
+	
+	
+
 	private boolean tired = false;
 
 	/**
@@ -124,7 +128,15 @@ public class Process implements Runnable {
 	public boolean isTired() {
 		return tired;
 	}
+	
+	/**
+	 * @return the sequenceNo
+	 */
+	public int getSequenceNo() {
+		return sequenceNo;
+	}
 
+	
 	public void setGameSummary(ArrayList<HashMap<String, Integer>> gameSummary) {
 		this.gameSummary = gameSummary;
 	}
@@ -179,9 +191,9 @@ public class Process implements Runnable {
 
 	}
 
-	public Process(Socket socket) throws IOException, ClassNotFoundException, InvalidDataStreamException {
+	public Process(Socket socket, int sequence) throws IOException, ClassNotFoundException, InvalidDataStreamException {
 		this.socket = socket;
-
+		this.sequenceNo = sequence;
 		initStreams();
 		initPlayerInfo();
 

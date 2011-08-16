@@ -49,7 +49,7 @@ public class Codes {
 	/**
 	 * Flag tells the client of an updated board.
 	 * */
-	public static final String ROUND_UPDATE = "ROUND_UPDATE";
+	public static final String BOARD_UPDATE = "BOARD_UPDATE";
 	
 	/**
 	 * Ask the client to place a bid.

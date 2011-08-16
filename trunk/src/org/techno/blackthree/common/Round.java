@@ -240,7 +240,10 @@ public class Round implements Serializable {
 				currentBoard.addMove(players[currentPlayerToPlay], move);
 				// -->next player
 				currentPlayerToPlay = (currentPlayerToPlay + 1) % len;
-
+				
+				//send this move to all the other players
+				//TODO: Move update
+				//players[currentPlayerToPlay].boardUpdate();
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {

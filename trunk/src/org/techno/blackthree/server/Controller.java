@@ -62,7 +62,7 @@ public class Controller implements Runnable {
 				try {
 
 					// init the streams and get the player info
-					p = new Process(s);
+					p = new Process(s,index);
 
 					// send all the initial player's update to this player
 					p.sendAllPlayersUpdate(players);

@@ -5,6 +5,8 @@ package org.techno.blackthree.common;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.Set;
+
 import org.techno.blackthree.server.Process;
 
 /**
@@ -82,11 +84,16 @@ public class Board implements Serializable {
 	 * */
 	public void summarize() {
 		//System.out.println("summarizing the board");
-		System.out.println(this.moves);
-		//TODO: implement summarize	
+		//System.out.println(this.moves);
+		//TODO: implement summarize
+		//get the round parameters, iterate from the start
 		
+		Set<Process> itr =moves.keySet();
+		Process firstPlayer = itr.iterator().next();
+		for(Process p:itr){
+			System.out.println(p+"-->"+moves.get(p));
+		}
 		
-		//get the round parameters, iterate fromt the start
 	}
 	
 	
