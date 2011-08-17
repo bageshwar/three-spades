@@ -33,12 +33,18 @@ public class Card implements Serializable{
 		return face;
 	}
 	
+	/**
+	 * The point value of the card. Used to calculate the scores.
+	 * */
 	public int getValue(){
 		if(this.suite.equals(Suite.SPADE) && this.face.equals(Face.THREE))
 			return 30;
 		return face.getValue();
 	}
 	
+	/**
+	 * The internal value of the card. Used to decide the winner card.
+	 * */
 	public int getInternalValue(){
 		return internalValue;
 	}

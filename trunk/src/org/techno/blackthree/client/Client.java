@@ -138,7 +138,8 @@ public class Client implements Runnable {
 					output.reset();
 					e.printStackTrace();
 				} catch (StreamCorruptedException e) {
-					
+					input.reset();
+					output.reset();
 					e.printStackTrace();
 				} 			
 			}

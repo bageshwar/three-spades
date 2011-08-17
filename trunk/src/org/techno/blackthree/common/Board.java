@@ -4,6 +4,7 @@
 package org.techno.blackthree.common;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -32,6 +33,10 @@ public class Board implements Serializable {
 	
 	private Process winner;
 	
+	private RoundParameters params = null;
+	
+	private int score;
+	
 	/**
 	 * Usual getter for the field.
 	 * */
@@ -39,6 +44,7 @@ public class Board implements Serializable {
 		return moves;
 	}
 
+	
 	/**
 	 * Usual Setter for the Field.
 	 * */
@@ -46,8 +52,8 @@ public class Board implements Serializable {
 		this.moves = moves;
 	}
 
-	public int getWinner() {
-		return 0;
+	public Process getWinner() {
+		return winner;
 	}
 
 	public void setWinner(Process winner) {
@@ -62,10 +68,11 @@ public class Board implements Serializable {
 		this.score = score;
 	}
 
-	private int score;
 	
-	public Board(){
+	
+	public Board(RoundParameters params){
 		moves = new LinkedHashMap<Process,Move>();
+		this.params = params;
 	}
 	
 	/**
@@ -88,11 +95,50 @@ public class Board implements Serializable {
 		//TODO: implement summarize
 		//get the round parameters, iterate from the start
 		
-		Set<Process> itr =moves.keySet();
-		Process firstPlayer = itr.iterator().next();
-		for(Process p:itr){
-			System.out.println(p+"-->"+moves.get(p));
+		Set<Process> set =moves.keySet();
+		Iterator<Process> itr = set.iterator(); 
+		Process firstPlayer = itr.next();
+		Move firstPlayerMove = moves.get(firstPlayer);
+		score+= firstPlayerMove.getCard().getValue();
+		
+		Process p = null;
+		Move m = null;
+		int maxTriumphWeight = 0;
+		int maxSuiteWeight = 0;
+		Process maxTriumphPlayer = null;
+		Process maxSuitePlayer = null;
+		while(itr.hasNext()){
+			p = itr.next();
+			m = moves.get(p);
+			score+=m.getCard().getValue();
+			/**
+			 * Logic :
+			 * The firstPlayer's suite is the master suite.
+			 * Next Player's suite should either be the triumph, or the master suite.
+			 * */
+			if(m.getCard().getSuite().equals(firstPlayerMove)){
+				//same suite
+				if(m.getCard().getInternalValue()>maxSuiteWeight ){
+					maxSuiteWeight = m.getCard().getInternalValue();
+					maxSuitePlayer = p;
+				}
+			}else if(m.getCard().getSuite().equals(params.getTriumph())){
+				//triumph
+				if(m.getCard().getInternalValue()>maxTriumphWeight ){
+					maxTriumphWeight = m.getCard().getInternalValue();
+					maxTriumphPlayer = p;
+				}
+			}
+			
 		}
+		if(maxTriumphPlayer!=null){
+			//the winner is the triumph player
+			this.winner = maxTriumphPlayer;
+		}else {
+			this.winner = (maxSuitePlayer==null)?firstPlayer:maxSuitePlayer;
+		}
+		
+		System.out.println("\u265b is "+winner+" > "+moves.get(winner)+" and Total Score="+score);
 		
 	}
 	
