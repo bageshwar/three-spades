@@ -230,13 +230,13 @@ public class Round implements Serializable {
 		Move move = null;
 		for (int j = 0; j < noOfBoards; j++) {
 			// init board
-			currentBoard = new Board();
+			currentBoard = new Board(roundParams);
 			// add this board to the list of boards.
 			boards.add(currentBoard);
 			for (int i = 0; i < len; i++) {
 				// iterate players.length no of times, access players by idx.
 				move = players[currentPlayerToPlay].makeAMove();
-				System.out.println("Player moved" + players[currentPlayerToPlay] + " " + move);
+				//System.out.println("Player moved" + players[currentPlayerToPlay] + " " + move);
 				currentBoard.addMove(players[currentPlayerToPlay], move);
 				// -->next player
 				currentPlayerToPlay = (currentPlayerToPlay + 1) % len;
@@ -251,11 +251,10 @@ public class Round implements Serializable {
 				}
 
 			}
+			System.out.println(currentBoard.getMoves());
 			// summarize the board
 			currentBoard.summarize();
-			
-			System.out.println(currentBoard.getMoves());
-			currentPlayerToPlay = currentBoard.getWinner();
+			currentPlayerToPlay = currentBoard.getWinner().getSequenceNo();
 			// reset the current board
 			currentBoard = null;
 
