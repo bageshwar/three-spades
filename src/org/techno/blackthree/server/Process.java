@@ -29,7 +29,7 @@ public class Process implements Runnable {
 	/**
 	 * The player this process caters too.
 	 * */
-	private Player player;
+	private Player player; 
 	private Socket socket;
 
 	private int sequenceNo;
