@@ -6,6 +6,7 @@ package org.techno.blackthree.common;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.techno.blackthree.server.Process;
 
@@ -29,6 +30,8 @@ public class Round implements Serializable {
 	 * Transient because its not required to be serialized.
 	 * */
 	transient Process[] players;
+
+	transient HashMap<Process, Integer> scores = null;
 
 	/**
 	 * The Next player to bid
@@ -74,6 +77,7 @@ public class Round implements Serializable {
 		initialPlayer = _initialPlayer;
 		roundParams = new RoundParameters(players.length);
 		boards = new ArrayList<Board>();
+		scores = new HashMap<Process, Integer>();
 	}
 
 	/**
@@ -183,7 +187,7 @@ public class Round implements Serializable {
 		}
 		// now the kings men have been decided. time to set the commoners
 		for (Process p : players) {
-			if (!kingsMen.contains(p))
+			if (!kingsMen.contains(p) && !p.equals(players[roundParams.getKing()])  )
 				commoners.add(p);
 		}
 
@@ -236,14 +240,15 @@ public class Round implements Serializable {
 			for (int i = 0; i < len; i++) {
 				// iterate players.length no of times, access players by idx.
 				move = players[currentPlayerToPlay].makeAMove();
-				//System.out.println("Player moved" + players[currentPlayerToPlay] + " " + move);
+				// System.out.println("Player moved" +
+				// players[currentPlayerToPlay] + " " + move);
 				currentBoard.addMove(players[currentPlayerToPlay], move);
 				// -->next player
 				currentPlayerToPlay = (currentPlayerToPlay + 1) % len;
-				
-				//send this move to all the other players
-				//TODO: Move update
-				//players[currentPlayerToPlay].boardUpdate();
+
+				// send this move to all the other players
+				// TODO: Move update
+				// players[currentPlayerToPlay].boardUpdate();
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -264,9 +269,42 @@ public class Round implements Serializable {
 	}
 
 	private void summarizeRound() {
-		// TODO Auto-generated method stub summarizeRound
-		System.out.println("Round summary");
 
+		/*
+		 * Iterate though each board, and distribute the score between 2 groups
+		 * (kings men and commoners )
+		 */
+		int kingScore = 0, commonerScore = 0;
+		for (Board b : boards) {
+			if (kingsMen.contains(b.getWinner()))
+				kingScore += b.getScore();
+			else
+				commonerScore += b.getScore();
+		}
+
+		// if kingsmen win, king gets the bid,kingsmen get half of bid and
+		// commoners get nothing
+		// if kingsmen lose, kings men dont get anything,commoners get the bid
+
+		if (kingScore > this.roundParams.getMaxBid()) {
+			// kings men won !
+			scores.put(players[roundParams.getKing()], roundParams.getMaxBid() );
+			for(Process p:kingsMen)
+				scores.put(p, roundParams.getMaxBid()/2 );
+			for(Process p:commoners)
+				scores.put(p, 0);
+			
+		}else {
+			//commoners won
+			scores.put(players[roundParams.getKing()], 0 );
+			for(Process p:kingsMen)
+				scores.put(p, 0);
+			for(Process p:commoners)
+				scores.put(p, roundParams.getMaxBid());
+
+		}
+
+		System.out.println(scores);
 	}
 
 }

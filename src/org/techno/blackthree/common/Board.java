@@ -90,10 +90,7 @@ public class Board implements Serializable {
 	 * Iterate through the moves, and 
 	 * */
 	public void summarize() {
-		//System.out.println("summarizing the board");
-		//System.out.println(this.moves);
-		//TODO: implement summarize
-		//get the round parameters, iterate from the start
+
 		
 		Set<Process> set =moves.keySet();
 		Iterator<Process> itr = set.iterator(); 
@@ -116,7 +113,7 @@ public class Board implements Serializable {
 			 * The firstPlayer's suite is the master suite.
 			 * Next Player's suite should either be the triumph, or the master suite.
 			 * */
-			if(m.getCard().getSuite().equals(firstPlayerMove)){
+			if(m.getCard().getSuite().equals(firstPlayerMove.getCard().getSuite())){
 				//same suite
 				if(m.getCard().getInternalValue()>maxSuiteWeight ){
 					maxSuiteWeight = m.getCard().getInternalValue();
@@ -129,6 +126,7 @@ public class Board implements Serializable {
 					maxTriumphPlayer = p;
 				}
 			}
+			System.out.println(m+":"+maxSuiteWeight+":"+maxSuitePlayer+":"+maxTriumphWeight+":"+maxTriumphPlayer);
 			
 		}
 		if(maxTriumphPlayer!=null){
