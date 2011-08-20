@@ -101,9 +101,9 @@ public class Board implements Serializable {
 		Process p = null;
 		Move m = null;
 		int maxTriumphWeight = 0;
-		int maxSuiteWeight = 0;
+		int maxSuiteWeight = firstPlayerMove.getCard().getInternalValue();
 		Process maxTriumphPlayer = null;
-		Process maxSuitePlayer = null;
+		Process maxSuitePlayer = firstPlayer;
 		while(itr.hasNext()){
 			p = itr.next();
 			m = moves.get(p);
@@ -115,18 +115,20 @@ public class Board implements Serializable {
 			 * */
 			if(m.getCard().getSuite().equals(firstPlayerMove.getCard().getSuite())){
 				//same suite
+				//System.out.println("Suite "+m+" Internal: "+m.getCard().getInternalValue()+" W:"+maxTriumphWeight );
 				if(m.getCard().getInternalValue()>maxSuiteWeight ){
 					maxSuiteWeight = m.getCard().getInternalValue();
 					maxSuitePlayer = p;
+					//System.out.println("Max suite "+maxSuiteWeight);
 				}
 			}else if(m.getCard().getSuite().equals(params.getTriumph())){
 				//triumph
+				//System.out.println("Trump "+m+" Internal: "+m.getCard().getInternalValue()+" W:"+maxTriumphWeight );
 				if(m.getCard().getInternalValue()>maxTriumphWeight ){
 					maxTriumphWeight = m.getCard().getInternalValue();
-					maxTriumphPlayer = p;
+					maxTriumphPlayer = p;					
 				}
 			}
-			System.out.println(m+":"+maxSuiteWeight+":"+maxSuitePlayer+":"+maxTriumphWeight+":"+maxTriumphPlayer);
 			
 		}
 		if(maxTriumphPlayer!=null){

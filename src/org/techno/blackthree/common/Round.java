@@ -250,7 +250,7 @@ public class Round implements Serializable {
 				// TODO: Move update
 				// players[currentPlayerToPlay].boardUpdate();
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -270,6 +270,8 @@ public class Round implements Serializable {
 
 	private void summarizeRound() {
 
+		System.out.println(kingsMen);
+		System.out.println(commoners);
 		/*
 		 * Iterate though each board, and distribute the score between 2 groups
 		 * (kings men and commoners )
