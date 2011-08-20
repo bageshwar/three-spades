@@ -52,7 +52,8 @@ public enum Face {
 			return 13;
 		else if(face.equals("A"))
 			return 14;
-		else return value;
+		//if none of these, then its a pure number, parse the rep
+		else return Integer.parseInt(face);
 	}
 	private int value;
 
