@@ -9,11 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.techno.blackthree.common.Card;
-import org.techno.blackthree.common.Face;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Round;
 import org.techno.blackthree.common.RoundParameters;
-import org.techno.blackthree.common.Suite;
 
 /**
  * The server sends the control to this class, which does all the syncing
@@ -51,12 +49,12 @@ public class Controller implements Runnable {
 		return size;
 	}
 
-	public void addPlayer(final int index, final Socket s) {
-		new Thread(threadGroup, new Runnable() {
-
-			@Override
-			public void run() {
-
+	/**
+	 * A synchronous method, that initializes the player, 
+	 * and sends other player updates about this.
+	 * */
+	public void addPlayer(int index,Socket s) {
+		
 				// create a process
 				Process p = null;
 				try {
@@ -66,10 +64,10 @@ public class Controller implements Runnable {
 
 					// send all the initial player's update to this player
 					p.sendAllPlayersUpdate(players);
-					p.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
+					//p.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
 
-					Controller.this.sendPlayerUpdate(p.getPlayer().getName());
-					Controller.this.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
+					sendPlayerUpdate(p.getPlayer().getName());
+					sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
 
 				} catch (IOException e) {
 					
@@ -88,9 +86,7 @@ public class Controller implements Runnable {
 					players[index] = p;
 				}
 			}
-		}, "Player#" + index).start();
 
-	}
 
 	protected void sendPlayerUpdate(final String name) {
 
@@ -152,11 +148,12 @@ public class Controller implements Runnable {
 
 			// while(!isTired()){
 
-			
+			for(int x=0;x<5;x++){
 			// if this is the first round, pass 0 as initial player,
 			// else pass the last rounds first player as initial player
 			currentRound = new Round(players, (currentRound == null ? 0 : currentRound.getInitialPlayer() + 1
 					% this.size));
+			rounds.add(currentRound);
 			this.distributeDeal();
 			this.requestForBid();
 
@@ -173,7 +170,7 @@ public class Controller implements Runnable {
 			
 			currentRound.playBoard();
 			
-			// }
+			 }
 		} catch (InterruptedException e) {
 			
 			e.printStackTrace();
@@ -228,7 +225,7 @@ public class Controller implements Runnable {
 
 	private void sendBidUpdate(RoundParameters roundParams) throws IOException {
 		System.out.println("Sending Bid update");
-		System.out.println(roundParams);
+		//System.out.println(roundParams);
 		for (Process p : players) {
 			if (p == null)
 				continue;
@@ -257,7 +254,7 @@ public class Controller implements Runnable {
 
 		HashMap<Process, ArrayList<Card>> pack = new HashMap<Process, ArrayList<Card>>();
 
-		Card[] freshPack = getFreshPack();
+		Card[] freshPack = Card.getFreshPack();
 
 		int random = getRandomNumber();
 
@@ -278,16 +275,9 @@ public class Controller implements Runnable {
 			}
 		}
 
-		// System.out.println(pack);
-
 		// the deal is ready.. please distribute it.
-
-		System.out.println("It appears that all players have joined");
-		for (Process p : players)
-			System.out.println(p.getPlayer().toString());
-
+		
 		for (Process p : players) {
-
 			p.distributeDeal(pack.get(p));
 
 		}
@@ -297,17 +287,5 @@ public class Controller implements Runnable {
 		return (int) (Math.random() * 48);
 	}
 
-	private Card[] getFreshPack() {
-
-		ArrayList<Card> pack = new ArrayList<Card>();
-
-		for (Face face : Face.values()) {
-			for (Suite suite : Suite.values()) {
-				pack.add(new Card(suite, face));
-			}
-		}
-
-		return pack.toArray(new Card[] {});
-
-	}
+	
 }

@@ -179,6 +179,7 @@ public class Round implements Serializable {
 		commoners = new ArrayList<Process>();
 		for (Card c : roundParams.getPartnerCards()) {
 			for (Process p : players) {
+				System.out.println("Assigning Partners: "+c+" against "+p.getPlayer().getCards());
 				if (p.getPlayer().getCards().contains(c)) {
 					// this is kings partner
 					kingsMen.add(p);
@@ -191,34 +192,11 @@ public class Round implements Serializable {
 				commoners.add(p);
 		}
 
+		System.out.println("King's Men "+kingsMen);
+		System.out.println("Commoners "+commoners);
 	}
 
-	/**
-	 * Take the move from the board, process it. And set winner player and score
-	 * for that board.
-	 * */
-	public void processBoard() {
-
-		int boardScore = 0;
-		int maxTriumph = 0;
-		int maxCard = 0;
-		int temp;
-		Process leadingPlayer = null;
-		Move m = null;
-		for (Process p : currentBoard.getMoves().keySet()) {
-			m = currentBoard.getMoves().get(p);
-			boardScore += m.getCard().getValue();
-			// this is the internal value of the card
-			temp = m.getCard().getInternalValue();
-
-			// need to check what was the initial suite.
-			// if this does not match initial suite,
-			// check if this is triumph, if so handle triumph,
-			// else do not compare the internal value
-		}
-
-	}
-
+	
 	/**
 	 * Request the King, to move, and then each player to move , Evaluate the
 	 * result. Assign the scores. Move to the next round.
@@ -270,8 +248,7 @@ public class Round implements Serializable {
 
 	private void summarizeRound() {
 
-		System.out.println(kingsMen);
-		System.out.println(commoners);
+		
 		/*
 		 * Iterate though each board, and distribute the score between 2 groups
 		 * (kings men and commoners )
