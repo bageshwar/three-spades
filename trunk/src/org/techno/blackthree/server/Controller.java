@@ -24,6 +24,8 @@ public class Controller implements Runnable {
 	private int size;
 
 	private boolean tired = false;
+	
+	private HashMap<Process,Integer> scores;
 
 	public boolean isTired() {
 		return tired;
@@ -111,6 +113,7 @@ public class Controller implements Runnable {
 		players = new Process[size];
 		rounds = new ArrayList<Round>();
 		threadGroup = new ThreadGroup("PlayersProcessThreadGroup");
+		scores = new HashMap<Process,Integer>();
 	}
 
 	/**
@@ -171,6 +174,7 @@ public class Controller implements Runnable {
 			currentRound.playBoard();
 			
 			 }
+			summarizeRounds();
 		} catch (InterruptedException e) {
 			
 			e.printStackTrace();
@@ -183,6 +187,21 @@ public class Controller implements Runnable {
 		}
 
 		
+	}
+
+	private void summarizeRounds() {
+		for(Process p:players){
+			scores.put(p,0);
+		}
+		int roundScore=0;
+		for(Round r:rounds){
+			for(Process p :players){
+				roundScore =r.getScores().get(p);
+				scores.put(p, scores.get(p)+roundScore);
+			
+			}
+		}
+		System.out.println(scores);
 	}
 
 	private void sendPartnerCardsAndTriumph() throws IOException {

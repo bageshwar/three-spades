@@ -168,6 +168,13 @@ public class Round implements Serializable {
 	}
 
 	/**
+	 * @return the scores
+	 */
+	public HashMap<Process, Integer> getScores() {
+		return scores;
+	}
+
+	/**
 	 * Check the partner cards and assign the players to either side.
 	 * */
 	public void assignPartners() {
@@ -178,11 +185,11 @@ public class Round implements Serializable {
 		kingsMen = new ArrayList<Process>();
 		commoners = new ArrayList<Process>();
 		for (Card c : roundParams.getPartnerCards()) {
-			for (Process p : players) {
-				System.out.println("Assigning Partners: "+c+" against "+p.getPlayer().getCards());
+			for (Process p : players) {				
 				if (p.getPlayer().getCards().contains(c)) {
 					// this is kings partner
 					kingsMen.add(p);
+					break;
 				}
 			}
 		}
@@ -236,7 +243,7 @@ public class Round implements Serializable {
 			}
 			System.out.println(currentBoard.getMoves());
 			// summarize the board
-			currentBoard.summarize();
+			currentBoard.summarizeBoard();
 			currentPlayerToPlay = currentBoard.getWinner().getSequenceNo();
 			// reset the current board
 			currentBoard = null;

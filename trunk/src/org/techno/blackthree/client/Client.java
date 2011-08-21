@@ -110,7 +110,7 @@ public class Client implements Runnable {
 	private Client(String host, int port) throws UnknownHostException, IOException {
 		clientSocket = new Socket(host, port);
 		player = new Player("Player# " + (int) (Math.random() * 200));
-		roundParams = new RoundParameters();
+		//roundParams = new RoundParameters();
 	}
 
 	@Override
@@ -253,6 +253,9 @@ public class Client implements Runnable {
 		ArrayList<Card> deal = (ArrayList<Card>) o;
 		player.setCards(deal);
 		System.out.println(player.getName() + ">> Deal " + deal);
+		
+		//since this is a new deal, need to reset the roundParams
+		roundParams = new RoundParameters();
 
 	}
 
