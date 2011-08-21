@@ -53,7 +53,7 @@ public class Server {
 	 * */
 	private Server(String[] args) {
 
-		int size = 4;
+		int size = 8;
 		try {
 			if (args != null && args.length != 0) {
 				size = Integer.parseInt(args[0]);				

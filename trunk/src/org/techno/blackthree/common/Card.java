@@ -4,6 +4,7 @@
 package org.techno.blackthree.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * @author bageshwp
@@ -54,4 +55,58 @@ public class Card implements Serializable{
 	
 		return suite.toString()+"-" + face.getFace();
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((face == null) ? 0 : face.hashCode());
+		result = prime * result + ((suite == null) ? 0 : suite.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Card other = (Card) obj;
+		if (face == null) {
+			if (other.face != null)
+				return false;
+		} else if (!face.equals(other.face))
+			return false;
+		if (suite == null) {
+			if (other.suite != null)
+				return false;
+		} else if (!suite.equals(other.suite))
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Returns a Fresh Pack
+	 * */
+	public static Card[] getFreshPack() {
+
+		ArrayList<Card> pack = new ArrayList<Card>();
+
+		for (Face face : Face.values()) {
+			for (Suite suite : Suite.values()) {
+				pack.add(new Card(suite, face));
+			}
+		}
+
+		return pack.toArray(new Card[] {});
+
+	}
+	
 }

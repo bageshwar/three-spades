@@ -298,11 +298,11 @@ public class Process implements Runnable {
 		/**
 		 * Fix for serialization issues with same object
 		 * */
-		RoundParameters r = new RoundParameters();
+	/*	RoundParameters r = new RoundParameters();
 		r.setMaxBid(roundParams.getMaxBid());
 		r.setKingPlayer(roundParams.getKingPlayer());
-		
-		output.writeObject(r);
+	*/	
+		output.writeObject(roundParams);
 		output.flush();
 		output.reset();
 		
@@ -341,8 +341,7 @@ public class Process implements Runnable {
 		 * Send the round parameters.
 		 * These are the final set of round parameters.
 		 */
-		output.writeObject(Codes.ROUND_PARAMETERS_UPDATE);
-		System.out.println(roundParams);
+		output.writeObject(Codes.ROUND_PARAMETERS_UPDATE);		
 		output.writeObject(roundParams);
 		output.flush();
 		output.reset();

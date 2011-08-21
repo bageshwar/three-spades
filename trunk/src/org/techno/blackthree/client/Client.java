@@ -11,6 +11,8 @@ import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
@@ -60,7 +62,7 @@ public class Client implements Runnable {
 
 	public static void main(String s[]) {
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 8; i++) {
 
 			Client client = null;
 
@@ -224,8 +226,17 @@ public class Client implements Runnable {
 		int randomSuite = (int) (Math.random() * 4);
 		Suite suite = Suite.values()[randomSuite];
 
-		Card[] partnerCards = new Card[] { player.getCards().get(0), player.getCards().get(1), player.getCards().get(2) };
-
+		//Algo to generate 3 random partner cards
+		Card[] pack = Card.getFreshPack();
+		Card[] partnerCards = new Card[3];
+		int idx = 0,rnd=0;
+		while(idx<3){
+			rnd = (int) (Math.random() * 48);
+			if(!player.getCards().contains(pack[rnd])){
+				partnerCards[idx++] = pack[rnd];
+			}
+		}
+		
 		// Utilising the same reference
 		roundParams.setTriumph(suite);
 		roundParams.setPartnerCards(partnerCards);
