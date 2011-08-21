@@ -89,7 +89,7 @@ public class Board implements Serializable {
 	/**
 	 * Iterate through the moves, and 
 	 * */
-	public void summarize() {
+	public void summarizeBoard() {
 
 		
 		Set<Process> set =moves.keySet();

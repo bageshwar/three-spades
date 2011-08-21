@@ -270,7 +270,7 @@ public class Process implements Runnable {
 	 * Send the client his deal
 	 * */
 	public void distributeDeal(ArrayList<Card> list) throws IOException {
-		
+		player.setCards(list);
 		output.writeObject(Codes.ACCEPT_HAND);
 		output.writeObject(list);
 		output.flush();
