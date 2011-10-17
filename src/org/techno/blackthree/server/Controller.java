@@ -8,10 +8,15 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.event.EventListenerList;
+
 import org.techno.blackthree.common.Card;
+import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Round;
 import org.techno.blackthree.common.RoundParameters;
+import org.techno.blackthree.common.event.GameEvent;
+import org.techno.blackthree.common.event.GameEventListener;
 
 /**
  * The server sends the control to this class, which does all the syncing
@@ -21,8 +26,11 @@ import org.techno.blackthree.common.RoundParameters;
  */
 public class Controller implements Runnable {
 
-	private int size;
 
+	EventListenerList gameEventListeners;
+	
+	private int size;
+	
 	private boolean tired = false;
 	
 	private HashMap<Process,Integer> scores;
@@ -57,6 +65,8 @@ public class Controller implements Runnable {
 	 * */
 	public void addPlayer(int index,Socket s) {
 		
+				
+		
 				// create a process
 				Process p = null;
 				try {
@@ -67,7 +77,8 @@ public class Controller implements Runnable {
 					// send all the initial player's update to this player
 					p.sendAllPlayersUpdate(players);
 					//p.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
-
+					fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,p.getPlayer().getName()));
+					
 					sendPlayerUpdate(p.getPlayer().getName());
 					sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
 
@@ -107,6 +118,27 @@ public class Controller implements Runnable {
 		}
 	}
 
+	
+	 public void addGameEventListener(GameEventListener l) {
+		 gameEventListeners.add(GameEventListener.class, l);
+	 }
+
+	 public void removeGameEventListener(GameEventListener l) {
+		 gameEventListeners.remove(GameEventListener.class, l);
+	 }
+
+	public void fireGameEvent(GameEvent gameEvent){
+		System.out.println("Game Event: "+gameEvent);
+		for(Object o: gameEventListeners.getListenerList() ){
+			System.out.println(o.getClass());
+			if(o instanceof GameEventListener){
+			GameEventListener gel = (GameEventListener) o;
+			gel.consumeGameEvent(gameEvent);
+			}
+		}
+	}
+
+	
 	public Controller(int size) {
 
 		this.size = size;
@@ -114,6 +146,7 @@ public class Controller implements Runnable {
 		rounds = new ArrayList<Round>();
 		threadGroup = new ThreadGroup("PlayersProcessThreadGroup");
 		scores = new HashMap<Process,Integer>();
+		gameEventListeners = new EventListenerList();
 	}
 
 	/**
@@ -141,7 +174,7 @@ public class Controller implements Runnable {
 			}
 		}
 
-		
+		fireGameEvent(new GameEvent(Codes.ALL_PLAYERS_JOINED));
 
 		try {
 

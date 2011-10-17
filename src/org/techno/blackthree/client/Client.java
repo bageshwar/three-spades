@@ -97,17 +97,21 @@ public class Client implements Runnable {
 			}
 
 			new Thread(client).start();
-
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private Client(String host) throws UnknownHostException, IOException {
+	public Client(String host) throws UnknownHostException, IOException {
 
 		this(host, Server.SERVER_PORT);
 
 	}
 
-	private Client(String host, int port) throws UnknownHostException, IOException {
+	public Client(String host, int port) throws UnknownHostException, IOException {
 		clientSocket = new Socket(host, port);
 		player = new Player("Player# " + (int) (Math.random() * 200));
 		//roundParams = new RoundParameters();

@@ -86,4 +86,9 @@ public class Codes {
 	 * Flag which tells the client to accept the triumph and 3 player cards.
 	 * */
 	public static final String ROUND_PARAMETERS_UPDATE = "ROUND_PARAMETERS_UPDATE"; 
+	
+	/**
+	 * Indicates that all players have joined the game
+	 * */
+	public static final String ALL_PLAYERS_JOINED = "ALL_PLAYERS_JOINED";
 }
