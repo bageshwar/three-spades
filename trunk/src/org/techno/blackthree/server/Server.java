@@ -18,6 +18,7 @@ public class Server {
 	public static void main(String args[]) {
 		@SuppressWarnings("unused")
 		Server server = new Server(args);
+		server.init();
 		
 	}
 
