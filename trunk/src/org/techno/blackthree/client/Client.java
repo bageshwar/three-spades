@@ -11,8 +11,6 @@ import java.io.StreamCorruptedException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
@@ -20,6 +18,8 @@ import org.techno.blackthree.common.Move;
 import org.techno.blackthree.common.Player;
 import org.techno.blackthree.common.RoundParameters;
 import org.techno.blackthree.common.Suite;
+import org.techno.blackthree.common.event.GameEvent;
+import org.techno.blackthree.common.event.GameEventListener;
 import org.techno.blackthree.server.Server;
 
 /**
@@ -28,6 +28,26 @@ import org.techno.blackthree.server.Server;
  */
 @SuppressWarnings("unused")
 public class Client implements Runnable {
+
+	/**
+	 * This is the listener which will consume the events,
+	 * and act accordingly.
+	 * */
+	GameEventListener eventListener = null;
+	
+	/**
+	 * @return the eventListener
+	 */
+	public GameEventListener getEventListener() {
+		return eventListener;
+	}
+
+	/**
+	 * @param eventListener the eventListener to set
+	 */
+	public void setEventListener(GameEventListener eventListener) {
+		this.eventListener = eventListener;
+	}
 
 	Socket clientSocket = null;
 
@@ -42,6 +62,15 @@ public class Client implements Runnable {
 
 	private boolean connectionOK = false;
 	private Player player;
+
+	/**
+	 * @return the player
+	 */
+	public Player getPlayer() {
+		return player;
+	}
+
+	
 
 	private RoundParameters roundParams = null;
 
@@ -62,7 +91,7 @@ public class Client implements Runnable {
 
 	public static void main(String s[]) {
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 7; i++) {
 
 			Client client = null;
 
@@ -115,6 +144,16 @@ public class Client implements Runnable {
 		clientSocket = new Socket(host, port);
 		player = new Player("Player# " + (int) (Math.random() * 200));
 		//roundParams = new RoundParameters();
+	}
+	
+	public Client(String host, int port,String name) throws UnknownHostException, IOException {
+		clientSocket = new Socket(host, port);
+		player = new Player(name);
+		
+	}
+	
+	public Client(String host, int port, GameEventListener listener){
+		
 	}
 
 	@Override
@@ -196,6 +235,14 @@ public class Client implements Runnable {
 			updateRoundDetails();
 		else if (s.equals(Codes.MOVE))
 			makeAMove();
+		else if(s.equals(Codes.SCORE_UPDATE))
+			updateScore();
+	}
+
+	private void updateScore() throws IOException, ClassNotFoundException {
+		Integer score = (Integer) input.readObject();
+		this.player.setScore(score);
+		
 	}
 
 	private void makeAMove() throws IOException {
@@ -260,7 +307,14 @@ public class Client implements Runnable {
 		
 		//since this is a new deal, need to reset the roundParams
 		roundParams = new RoundParameters();
+		
+		fireEvent(new GameEvent(Codes.ACCEPT_HAND,deal));
 
+	}
+	
+	private void fireEvent(GameEvent gameEvent){
+		if(eventListener!=null)
+			eventListener.consumeGameEvent(gameEvent);
 	}
 
 	private void processAdhocMessage() throws IOException, ClassNotFoundException {
@@ -337,6 +391,8 @@ public class Client implements Runnable {
 
 		System.out.println(p + " has joined the game.");
 
+		fireEvent(new GameEvent(Codes.PLAYER_UPDATE,p));
+		
 		// utput.wriite
 		// no need to notify server of ok
 
