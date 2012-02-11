@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.swing.event.EventListenerList;
 
@@ -205,7 +206,8 @@ public class Controller implements Runnable {
 			//everybody should start playing now, starting from king and moving forward thereafter.
 			
 			currentRound.playBoard();
-			
+			//send the current round scores
+			this.sendScores();
 			 }
 			summarizeRounds();
 		} catch (InterruptedException e) {
@@ -219,6 +221,17 @@ public class Controller implements Runnable {
 			e.printStackTrace();
 		}
 
+		
+	}
+
+	private void sendScores() throws IOException {
+		
+		//iternate through the current round's scores, and
+		//send the same to every player.
+		
+		for(Entry<Process,Integer> entry:currentRound.getScores().entrySet()){
+			entry.getKey().sendScores(entry.getValue());
+		}
 		
 	}
 

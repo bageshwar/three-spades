@@ -91,4 +91,6 @@ public class Codes {
 	 * Indicates that all players have joined the game
 	 * */
 	public static final String ALL_PLAYERS_JOINED = "ALL_PLAYERS_JOINED";
+	
+	public static final String SCORE_UPDATE = "SCORE_UPDATE";
 }

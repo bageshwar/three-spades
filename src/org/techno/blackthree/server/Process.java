@@ -367,4 +367,14 @@ public class Process implements Runnable {
 		return m;
 	}
 
+	public void sendScores(Integer value) throws IOException {
+		//send the score
+		output.writeObject(Codes.SCORE_UPDATE);
+		output.writeObject(value);
+		output.flush();
+		output.reset();
+		
+		
+	}
+
 }

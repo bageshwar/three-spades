@@ -12,7 +12,25 @@ import java.io.Serializable;
 public class GameEvent implements Serializable {
 
 	String code;
+
+	Object response;
 	
+	
+	/**
+	 * @return the response
+	 */
+	public Object getResponse() {
+		return response;
+	}
+
+	/**
+	 * @param response the response to set
+	 */
+	public void setResponse(Object response) {
+		this.response = response;
+	}
+
+
 	Object payLoad;
 	/**
 	 * @return the payLoad
@@ -60,6 +78,6 @@ public class GameEvent implements Serializable {
 	
 	@Override
 	public String toString() {
-	return this.code+"[ "+payLoad+" ]";
+	return this.code+"[ "+payLoad+" ] [ "+response+" ]";
 	}
 }

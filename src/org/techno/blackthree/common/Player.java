@@ -21,6 +21,7 @@ public class Player implements Serializable {
 	 * */
 	private ArrayList<Card> cards;
 	private String name ;
+	private Integer score;
 	
 	
 	
@@ -33,6 +34,15 @@ public class Player implements Serializable {
 		
 		this.cards = cards;
 		this.name = name;
+		score=0;
+	}
+
+
+	/**
+	 * @return the score
+	 */
+	public Integer getScore() {
+		return score;
 	}
 
 
@@ -98,5 +108,11 @@ public class Player implements Serializable {
 	public String toString() {
 
 		return this.getName();
+	}
+
+
+	public void setScore(Integer score) {
+		this.score+=score;
+		
 	}
 }
