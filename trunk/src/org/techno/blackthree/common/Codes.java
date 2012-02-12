@@ -93,4 +93,6 @@ public class Codes {
 	public static final String ALL_PLAYERS_JOINED = "ALL_PLAYERS_JOINED";
 	
 	public static final String SCORE_UPDATE = "SCORE_UPDATE";
+	
+	public static final String INTERNAL_MESSAGE_PASSING="INTERNAL_MESSAGE_PASSING";
 }

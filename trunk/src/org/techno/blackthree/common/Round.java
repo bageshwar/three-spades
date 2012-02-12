@@ -225,8 +225,6 @@ public class Round implements Serializable {
 			for (int i = 0; i < len; i++) {
 				// iterate players.length no of times, access players by idx.
 				
-				players[currentPlayerToPlay].boardUpdate(currentBoard);
-				
 				move = players[currentPlayerToPlay].makeAMove();
 				// System.out.println("Player moved" +
 				// players[currentPlayerToPlay] + " " + move);
@@ -236,7 +234,7 @@ public class Round implements Serializable {
 
 				// send this move to all the other players
 				// TODO: Move update
-				
+				boardUpdate(currentBoard);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -254,6 +252,25 @@ public class Round implements Serializable {
 		}
 		summarizeRound();
 
+	}
+
+	/**
+	 * Send the updated board to all the players.
+	 * */
+	private void boardUpdate(Board cB) throws IOException {
+		
+		/**
+		 * Extract the information properly.
+		 * */
+		ArrayList<Move> m = new ArrayList<Move>();
+		
+		for(Process p:cB.getMoves().keySet()){
+			m.add(cB.getMoves().get(p));
+		}
+		for (Process p : players) {
+			p.boardUpdate(m);
+		}
+		
 	}
 
 	private void summarizeRound() {
