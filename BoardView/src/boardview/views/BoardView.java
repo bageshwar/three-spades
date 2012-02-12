@@ -31,10 +31,11 @@ import org.techno.blackthree.client.Client;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Face;
-import org.techno.blackthree.common.Move;
+import org.techno.blackthree.common.RoundParameters;
 import org.techno.blackthree.common.Suite;
 import org.techno.blackthree.common.event.GameEvent;
 import org.techno.blackthree.common.event.GameEventListener;
+import org.techno.blackthree.server.Server;
 
 import boardview.Activator;
 import boardview.common.NameSorter;
@@ -75,6 +76,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
+	private Action roundDetails;
 
 	private Display display = null;
 	
@@ -134,6 +136,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(connect);
 		manager.add(score);
+		manager.add(roundDetails);
 		manager.add(new Separator());
 		manager.add(host);
 	}
@@ -160,6 +163,17 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		action1.setToolTipText("Action 1 tooltip");
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+		roundDetails = new Action(){
+			public void run(){
+				if(client!=null && client.getRoundParams()!=null)
+					showMessage(client.getRoundParams().toString());
+			}
+		};
+		roundDetails.setText("Round Details");
+		roundDetails.setToolTipText("Round Details");
+		roundDetails.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_DEF_VIEW));
 		
 		connect = new Action() {
 			public void run() {
@@ -205,8 +219,16 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		
 		host = new Action() {
 			public void run() {
-				showMessage("Need to Host a Game");
-			}
+				
+			
+			new Thread(new Runnable() {
+				public void run() {
+					Server server = new Server(new String[]{"8"});
+					server.start();
+					Activator.getDefault().setServer(server);	
+				}
+			}).start();
+		}
 		};
 		host.setText("Host");
 		host.setToolTipText("Host a new Game");
@@ -218,7 +240,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 				if(client!=null)
 				showMessage("User Score: "+client.getPlayer().getScore());
 				
-				ArrayList<Move> a = new ArrayList<Move>();
+				/*ArrayList<Move> a = new ArrayList<Move>();
 				a.add(new Move(new Card(Suite.DIAMOND,Face.KING)));
 				a.add(new Move(new Card(Suite.CLUB,Face.QUEEN)));
 				a.add(new Move(new Card(Suite.SPADE,Face.JACK)));
@@ -235,7 +257,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 				DealDialog dd =  new DealDialog(display.getActiveShell(),a);
 				dd.setMyCards(myCards);
 				dd.open();
-				
+*/				
 			}
 		};
 		score.setText("Score");
@@ -335,11 +357,14 @@ public class BoardView extends ViewPart implements GameEventListener  {
 
 	private void makeAMove(GameEvent gameEvent) {
 		DealDialog dd  = new DealDialog(display.getActiveShell(),gameEvent.getPayLoad());
-		dd.open();
 		dd.setMyCards(client.getPlayer().getCards());
+		dd.setRoundParams(client.getRoundParams());
+		dd.open();
+		
 		
 		if(dd.getReturnCode()==Dialog.OK){
 			gameEvent.setResponse(dd.getMyCard());
+			//cards.
 		}
 	}
 	
