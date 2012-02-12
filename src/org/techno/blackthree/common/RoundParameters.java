@@ -91,7 +91,7 @@ public class RoundParameters implements Serializable{
 	@Override
 	public String toString() {
 	
-		return kingPlayer+">>"+maxBid+", Triumph "+triumph+", Partner Cards "+Arrays.toString(partnerCards);
+		return kingPlayer+" made a Bid of "+maxBid+", Triumph is "+triumph+" and Partner Cards are "+Arrays.toString(partnerCards);
 	}
 	
 }
