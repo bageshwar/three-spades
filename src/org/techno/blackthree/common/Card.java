@@ -108,5 +108,20 @@ public class Card implements Serializable{
 		return pack.toArray(new Card[] {});
 
 	}
+	public static Card[][] getFreshPackPerSuite(){
+		Card[][] pack = new Card[Suite.values().length][Face.values().length];
+
+		int i=0,j=0;
+		for (Suite suite : Suite.values()) {
+		for (Face face : Face.values()) {			
+				pack[i][j++]=(new Card(suite, face));
+			}
+			j=0;
+			i++;
+		}
+
+		return pack;
+
+	}
 	
 }
