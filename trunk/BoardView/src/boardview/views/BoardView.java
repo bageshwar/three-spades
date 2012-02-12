@@ -11,26 +11,26 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.part.ViewPart;
 import org.techno.blackthree.client.Client;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Face;
+import org.techno.blackthree.common.Move;
 import org.techno.blackthree.common.Suite;
 import org.techno.blackthree.common.event.GameEvent;
 import org.techno.blackthree.common.event.GameEventListener;
 import org.techno.blackthree.server.Server;
 
 import boardview.Activator;
-import boardview.common.ViewContentProvider;
+import boardview.common.BoardDesigner;
 import boardview.forms.BidDialog;
 import boardview.forms.ConnectDialog;
 import boardview.forms.DealDialog;
@@ -70,7 +70,9 @@ public class BoardView extends ViewPart implements GameEventListener  {
 
 	private Display display = null;
 	
-	private Composite root;
+	private Form form;
+	private Composite deal;
+	private Composite hand;
 	
 	Card[] cards = new Card[] { new Card(Suite.CLUB, Face.ACE) };
 	
@@ -98,6 +100,13 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());*/
 		
+		
+		Object[] c =BoardDesigner.createBoardSkeleton(parent, form, deal, hand,8,6);
+		form = (Form) c[0];
+		deal = (Composite) c[1];
+		hand = (Composite) c[2];
+		BoardDesigner.arrangeDeal(deal, new ArrayList<Move>(), 8,"40");
+		BoardDesigner.arrangeHand(hand, new ArrayList<Card>(), 6,"40");
 		
 		
 		// Create the help context id for the viewer's control
@@ -185,7 +194,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 				try {
 					client = new Client(connectDialog.getHost(),Integer.parseInt(connectDialog.getPort())
 							,connectDialog.getName());
-					client.setEventListener(BoardView.this);
+					client.addEventListener(BoardView.this);
 					new Thread(client).start();
 					try {
 						Thread.sleep(2000);
@@ -299,7 +308,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	 */
 	public void setFocus() {
 		//viewer.getControl().setFocus();
-		root.setFocus();
+		form.setFocus();
 	}
 	
 
@@ -351,6 +360,10 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		else if(code.equals(Codes.BOARD_UPDATE)){
 			updateBoard(gameEvent);
 		}
+		else if(code.equals(Codes.SCORE_UPDATE)){
+			//need to reset the deal
+			BoardDesigner.arrangeDeal(deal, new ArrayList<Move>(), 8, "40");
+		}
 			}
 
 			
@@ -359,7 +372,8 @@ public class BoardView extends ViewPart implements GameEventListener  {
 
 	private void updateBoard(GameEvent gameEvent) {
 		try {
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("boardview.views.LiveBoard");
+			BoardDesigner.arrangeDeal(deal, (ArrayList<Move>) gameEvent.getPayLoad(), 8, "40");
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("boardview.views.BoardView");
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
@@ -397,7 +411,6 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		bidDialog.open();
 		if(bidDialog.getReturnCode()==Dialog.OK)
 			gameEvent.setResponse(Integer.parseInt(bidDialog.getBid()));
-			
 		
 	}
 	
@@ -414,7 +427,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		viewer.add(cards);			
 		viewer.refresh();
 		return;*/
-		
+		BoardDesigner.arrangeHand(hand, client.getPlayer().getCards(), 6, "40");		
 	}
 
 }
