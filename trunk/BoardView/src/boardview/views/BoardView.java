@@ -6,41 +6,31 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.techno.blackthree.client.Client;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Face;
-import org.techno.blackthree.common.RoundParameters;
 import org.techno.blackthree.common.Suite;
 import org.techno.blackthree.common.event.GameEvent;
 import org.techno.blackthree.common.event.GameEventListener;
 import org.techno.blackthree.server.Server;
 
 import boardview.Activator;
-import boardview.common.NameSorter;
 import boardview.common.ViewContentProvider;
-import boardview.common.ViewLabelProvider;
 import boardview.forms.BidDialog;
 import boardview.forms.ConnectDialog;
 import boardview.forms.DealDialog;
@@ -72,13 +62,15 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	 */
 	public static final String ID = "boardview.views.BoardView";
 	Client client;
-	private TableViewer viewer;
+	//private TableViewer viewer;
 	private Action action1;
 	private Action action2;
-	private Action doubleClickAction;
+	//private Action doubleClickAction;
 	private Action roundDetails;
 
 	private Display display = null;
+	
+	private Composite root;
 	
 	Card[] cards = new Card[] { new Card(Suite.CLUB, Face.ACE) };
 	
@@ -100,21 +92,23 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	public void createPartControl(Composite parent) {
 		
 		display = parent.getDisplay();
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		/*viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider(cards));
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setSorter(new NameSorter());
-		viewer.setInput(getViewSite());
+		viewer.setInput(getViewSite());*/
+		
+		
 		
 		// Create the help context id for the viewer's control
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "BoardView.viewer");
 		makeActions();
-		hookContextMenu();
-		hookDoubleClickAction();
+		/*hookContextMenu();
+		hookDoubleClickAction();*/
 		contributeToActionBars();
 	}
 
-	private void hookContextMenu() {
+	/*private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
@@ -125,7 +119,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
-	}
+	}*/
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -141,12 +135,12 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		manager.add(host);
 	}
 
-	private void fillContextMenu(IMenuManager manager) {
+	/*private void fillContextMenu(IMenuManager manager) {
 		manager.add(action1);
 		manager.add(action2);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
+	}*/
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(connect);
@@ -240,6 +234,8 @@ public class BoardView extends ViewPart implements GameEventListener  {
 				if(client!=null)
 				showMessage("User Score: "+client.getPlayer().getScore());
 				
+				updateBoard(null);
+				
 				/*ArrayList<Move> a = new ArrayList<Move>();
 				a.add(new Move(new Card(Suite.DIAMOND,Face.KING)));
 				a.add(new Move(new Card(Suite.CLUB,Face.QUEEN)));
@@ -275,25 +271,25 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		action2.setToolTipText("Action 2 tooltip");
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
+		/*doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				showMessage("Double-click detected on "+obj.toString());
 			}
-		};
+		};*/
 	}
 
-	private void hookDoubleClickAction() {
+	/*private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
 		});
-	}
+	}*/
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
+			display.getActiveShell(),
 			"Board View",
 			message);
 	}
@@ -302,8 +298,10 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		viewer.getControl().setFocus();
+		//viewer.getControl().setFocus();
+		root.setFocus();
 	}
+	
 
 	@Override
 	public void consumeGameEvent(final GameEvent gameEvent) {
@@ -350,11 +348,27 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		else if (code.equals(Codes.MOVE)){
 			makeAMove(gameEvent);
 		}
+		else if(code.equals(Codes.BOARD_UPDATE)){
+			updateBoard(gameEvent);
+		}
 			}
+
 			
 		});
 	}
 
+	private void updateBoard(GameEvent gameEvent) {
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("boardview.views.LiveBoard");
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}
+		//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViews()[0]);
+		//PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findViewReference("ProjectExplorer");
+		
+	}
+
+	
 	private void makeAMove(GameEvent gameEvent) {
 		DealDialog dd  = new DealDialog(display.getActiveShell(),gameEvent.getPayLoad());
 		dd.setMyCards(client.getPlayer().getCards());
@@ -394,12 +408,12 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	}
 
 	private void acceptDeal(GameEvent gameEvent) {
-		viewer.remove(cards);
+		/*viewer.remove(cards);
 		cards=((ArrayList<Card>)(gameEvent.getPayLoad())).toArray(cards);		
 		((ViewContentProvider)viewer.getContentProvider()).setCards(cards);		
 		viewer.add(cards);			
 		viewer.refresh();
-		return;
+		return;*/
 		
 	}
 
