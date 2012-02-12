@@ -378,14 +378,9 @@ public class Process implements Runnable {
 		
 	}
 
-	public void boardUpdate(Board currentBoard) throws IOException {
+	public void boardUpdate(ArrayList<Move> m) throws IOException {
 		//before the player can move, he has to know the current board state
 		output.writeObject(Codes.BOARD_UPDATE);
-		ArrayList<Move> m = new ArrayList<Move>();
-		
-		for(Process p:currentBoard.getMoves().keySet()){
-			m.add(currentBoard.getMoves().get(p));
-		}
 		
 		output.writeObject(m);
 		output.flush();

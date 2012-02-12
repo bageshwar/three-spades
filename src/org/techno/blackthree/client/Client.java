@@ -36,20 +36,20 @@ public class Client implements Runnable {
 	 * This is the listener which will consume the events,
 	 * and act accordingly.
 	 * */
-	GameEventListener eventListener = null;
+	ArrayList<GameEventListener> eventListeners = new ArrayList<GameEventListener>();
 	
 	/**
 	 * @return the eventListener
 	 */
-	public GameEventListener getEventListener() {
-		return eventListener;
+	public ArrayList<GameEventListener> getEventListener() {
+		return eventListeners;
 	}
 
 	/**
 	 * @param eventListener the eventListener to set
 	 */
-	public void setEventListener(GameEventListener eventListener) {
-		this.eventListener = eventListener;
+	public void addEventListener(GameEventListener eventListener) {
+		this.eventListeners.add( eventListener);
 	}
 
 	Socket clientSocket = null;
@@ -247,12 +247,14 @@ public class Client implements Runnable {
 	private void updateBoard() throws IOException, ClassNotFoundException {
 		//read the board
 		currentBoard = (ArrayList<Move>) input.readObject();
+		fireEvent(new GameEvent(Codes.BOARD_UPDATE,currentBoard));
 		
 	}
 
 	private void updateScore() throws IOException, ClassNotFoundException {
 		Integer score = (Integer) input.readObject();
 		this.player.setScore(score);
+		fireEvent(new GameEvent(Codes.SCORE_UPDATE,null));
 		
 	}
 
@@ -268,7 +270,7 @@ public class Client implements Runnable {
 		m.setPlayer(this.getPlayer().getName());
 		GameEvent event =  new GameEvent(Codes.MOVE,currentBoard);
 		fireEvent(event);
-		if(eventListener!=null){
+		if(eventListeners.size()!=0){
 			Card c = (Card) event.getResponse();
 			m = new Move(c);
 			m.setPlayer(this.getPlayer().getName());
@@ -278,7 +280,10 @@ public class Client implements Runnable {
 		output.writeObject(m);		
 		output.flush();
 		output.reset();
-		player.getCards().remove(idx);
+		player.getCards().remove(idx);		
+		
+		//update the controls
+		fireEvent(new GameEvent(Codes.ACCEPT_HAND,player.getCards()));
 	}
 
 	private void updateRoundDetails() throws IOException, ClassNotFoundException {
@@ -312,7 +317,7 @@ public class Client implements Runnable {
 		fireEvent(event);
 		
 		//structure for non-simulated environments
-		if(this.getEventListener()!=null){
+		if(this.getEventListener().size()!=0){
 			suite = (Suite) ((Object[])event.getResponse())[0];
 			partnerCards = (Card[]) ((Object[])event.getResponse())[1];
 		}
@@ -342,8 +347,11 @@ public class Client implements Runnable {
 	}
 	
 	private void fireEvent(GameEvent gameEvent){
-		if(eventListener!=null)
-			eventListener.consumeGameEvent(gameEvent);
+		for(GameEventListener l:eventListeners){
+			l.consumeGameEvent(gameEvent);
+		}
+			
+			
 	}
 
 	private void processAdhocMessage() throws IOException, ClassNotFoundException {
