@@ -4,6 +4,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.techno.blackthree.client.Client;
+import org.techno.blackthree.server.Server;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -17,7 +18,22 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 	
 	private Client client;
+	private Server server;
 	
+	/**
+	 * @return the server
+	 */
+	public Server getServer() {
+		return server;
+	}
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setServer(Server server) {
+		this.server = server;
+	}
+
 	private String playerName="Player";
 	
 	private String defaultHost="127.0.0.1";

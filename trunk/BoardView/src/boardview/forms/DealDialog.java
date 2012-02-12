@@ -4,6 +4,7 @@
 package boardview.forms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Move;
+import org.techno.blackthree.common.RoundParameters;
 
 import boardview.Activator;
 
@@ -34,6 +36,7 @@ public class DealDialog extends Dialog {
 	private Card myCard;
 	
 	private ArrayList<Card> myCards;
+	private RoundParameters roundParams;
 	
 	/**
 	 * @return the myCards
@@ -84,7 +87,7 @@ public class DealDialog extends Dialog {
 
 		Composite composite = (Composite) super.createDialogArea(parent);
 		
-		int dealSize=6;
+		int dealSize=8;
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -109,6 +112,7 @@ public class DealDialog extends Dialog {
 		for(Move m:deal){
 			Card c = m.getCard();
 			Label label = new Label(board,SWT.NATIVE);
+			label.setToolTipText(m.getPlayer());
 			String n = "icons/75/"+c.getSuite().toString().toLowerCase()+"s-"+c.getFace().getFace().toLowerCase()+"-75.png";
 			label.setImage(Activator.getImageDescriptor(n).createImage());
 			//label.setEnabled(false);
@@ -116,8 +120,8 @@ public class DealDialog extends Dialog {
 		}
 		
 		
-		
 		final Label holder = new Label(board,SWT.NATIVE);
+		holder.setToolTipText("Your turn here...");
 		String holderIcon = "icons/75/back-blue-75-2.png";
 		holder.setImage(Activator.getImageDescriptor(holderIcon).createImage());
 		
@@ -170,8 +174,9 @@ public class DealDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Play Deal...");
-		newShell.setSize(600, 380);
+		newShell.setText("[PLAY]  ["+roundParams.getTriumph()+"] "+Arrays.toString(roundParams.getPartnerCards()));
+		//newShell.setText("[PLAY]  "+this.roundParams.toString());
+		newShell.setSize(800, 380);
 
 	}
 
@@ -180,5 +185,10 @@ public class DealDialog extends Dialog {
 		
 		
 		super.okPressed();
+	}
+
+	public void setRoundParams(RoundParameters roundParams) {
+		this.roundParams = roundParams;
+		
 	}
 }
