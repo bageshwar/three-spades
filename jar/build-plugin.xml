@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project default="plugin_export" name="build">
-	<target name="plugin_export">
-		<pde.exportPlugins destination="G:\projects\three-spades\jar" exportSource="false" exportType="zip" filename="black-three.zip" plugins="BoardView" useJARFormat="true"/>
-	</target>
-</project>
