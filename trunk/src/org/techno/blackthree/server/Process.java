@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.techno.blackthree.common.Board;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
@@ -375,6 +376,20 @@ public class Process implements Runnable {
 		output.reset();
 		
 		
+	}
+
+	public void boardUpdate(Board currentBoard) throws IOException {
+		//before the player can move, he has to know the current board state
+		output.writeObject(Codes.BOARD_UPDATE);
+		ArrayList<Move> m = new ArrayList<Move>();
+		
+		for(Process p:currentBoard.getMoves().keySet()){
+			m.add(currentBoard.getMoves().get(p));
+		}
+		
+		output.writeObject(m);
+		output.flush();
+		output.reset();
 	}
 
 }

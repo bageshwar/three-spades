@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import org.techno.blackthree.common.Board;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Move;
@@ -29,6 +30,8 @@ import org.techno.blackthree.server.Server;
 @SuppressWarnings("unused")
 public class Client implements Runnable {
 
+	ArrayList<Move> currentBoard;
+	
 	/**
 	 * This is the listener which will consume the events,
 	 * and act accordingly.
@@ -237,6 +240,14 @@ public class Client implements Runnable {
 			makeAMove();
 		else if(s.equals(Codes.SCORE_UPDATE))
 			updateScore();
+		else if(s.equals(Codes.BOARD_UPDATE))
+			updateBoard();
+	}
+
+	private void updateBoard() throws IOException, ClassNotFoundException {
+		//read the board
+		currentBoard = (ArrayList<Move>) input.readObject();
+		
 	}
 
 	private void updateScore() throws IOException, ClassNotFoundException {
@@ -254,6 +265,15 @@ public class Client implements Runnable {
 		int idx = (int)(Math.random()*player.getCards().size());
 		
 		Move m = new Move(player.getCards().get(idx));
+		m.setPlayer(this.getPlayer().getName());
+		GameEvent event =  new GameEvent(Codes.MOVE,currentBoard);
+		fireEvent(event);
+		if(eventListener!=null){
+			Card c = (Card) event.getResponse();
+			m = new Move(c);
+			m.setPlayer(this.getPlayer().getName());
+			idx = player.getCards().indexOf(c);
+		}
 		
 		output.writeObject(m);		
 		output.flush();
@@ -286,6 +306,15 @@ public class Client implements Runnable {
 			if(!player.getCards().contains(pack[rnd])){
 				partnerCards[idx++] = pack[rnd];
 			}
+		}
+		
+		GameEvent event = new GameEvent(Codes.KINGS_SPEECH,null);
+		fireEvent(event);
+		
+		//structure for non-simulated environments
+		if(this.getEventListener()!=null){
+			suite = (Suite) ((Object[])event.getResponse())[0];
+			partnerCards = (Card[]) ((Object[])event.getResponse())[1];
 		}
 		
 		// Utilising the same reference
@@ -352,9 +381,16 @@ public class Client implements Runnable {
 			bid = -1;
 		}
 
-		System.out.println("Me, " + this.player.toString() + " am placing a bid of " + bid);
-
-		output.writeObject(bid);
+		
+		 
+		
+		GameEvent event = new GameEvent(Codes.BID,null);
+		fireEvent(event);
+		Integer  mybid = (Integer) event.getResponse();		
+		if(mybid==null)
+			mybid=bid;
+		System.out.println("Me, " + this.player.toString() + " am placing a bid of " + mybid);
+		output.writeObject(mybid);
 		output.reset();
 		waitForOK();
 
@@ -405,6 +441,13 @@ public class Client implements Runnable {
 		output.reset();
 		waitForOK();
 
+	}
+
+	/**
+	 * @return the roundParams
+	 */
+	public RoundParameters getRoundParams() {
+		return roundParams;
 	}
 
 	private void initStreams() throws IOException, ClassNotFoundException, InterruptedException {
