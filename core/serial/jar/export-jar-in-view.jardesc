@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="BlackThree/BoardView/lib/black-three-core.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/BlackThree/jar/export-jar-in-view.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Codes.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.client{Client.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Round.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common.event{GameEventListener.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Move.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.server{Controller.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Face.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.server{Server.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{InvalidDataStreamException.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Player.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Card.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{RoundParameters.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Board.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common.event{GameEvent.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Suite.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.server{Process.java"/>
+    </selectedElements>
+</jardesc>
