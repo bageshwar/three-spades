@@ -38,6 +38,8 @@ public class Client implements Runnable {
 	 * */
 	ArrayList<GameEventListener> eventListeners = new ArrayList<GameEventListener>();
 	
+	
+	
 	/**
 	 * @return the eventListener
 	 */
@@ -94,6 +96,7 @@ public class Client implements Runnable {
 
 	public static void main(String s[]) {
 
+		s = new String[]{"localhost"};
 		for (int i = 0; i < 7; i++) {
 
 			Client client = null;
@@ -290,8 +293,14 @@ public class Client implements Runnable {
 
 		roundParams = (RoundParameters) input.readObject();
 
-		System.out.println(player.getName() + "\t" + roundParams);
+		debug(player.getName() + "\t" + roundParams);
 
+	}
+
+	private void debug(String msg) {
+		System.out.println(msg);
+		fireEvent(new GameEvent(Codes.LOG_MESSAGE,msg));
+		
 	}
 
 	private void sendPartnerCardsAndTriumph() throws IOException, ClassNotFoundException, InterruptedException {
@@ -337,7 +346,7 @@ public class Client implements Runnable {
 		Object o = input.readObject();
 		ArrayList<Card> deal = (ArrayList<Card>) o;
 		player.setCards(deal);
-		System.out.println(player.getName() + ">> Deal " + deal);
+		debug(player.getName() + ">> Deal " + deal);
 		
 		//since this is a new deal, need to reset the roundParams
 		roundParams = new RoundParameters();
@@ -356,7 +365,7 @@ public class Client implements Runnable {
 
 	private void processAdhocMessage() throws IOException, ClassNotFoundException {
 		String msg = (String) input.readObject();
-		System.out.println(player.getName() + " <<ServerCast>> " + msg);
+		debug(player.getName() + " <<ServerCast>> " + msg);
 
 	}
 
@@ -373,7 +382,7 @@ public class Client implements Runnable {
 		 * maxBid player's name
 		 * */
 
-		System.out.println(player.getName() + ">> Bid Update: " + roundParams);
+		debug(player.getName() + ">> Bid Update: " + roundParams);
 
 	}
 
@@ -385,7 +394,7 @@ public class Client implements Runnable {
 			bid = -1;
 
 		if (bid < roundParams.getMaxBid()) {
-			System.out.println(this.player.getName() + " can't place a bid, coz its too high");
+			debug(this.player.getName() + " can't place a bid, coz its too high");
 			bid = -1;
 		}
 
@@ -397,7 +406,7 @@ public class Client implements Runnable {
 		Integer  mybid = (Integer) event.getResponse();		
 		if(mybid==null)
 			mybid=bid;
-		System.out.println("Me, " + this.player.toString() + " am placing a bid of " + mybid);
+		debug("Me, " + this.player.toString() + " am placing a bid of " + mybid);
 		output.writeObject(mybid);
 		output.reset();
 		waitForOK();
@@ -433,7 +442,7 @@ public class Client implements Runnable {
 
 		String p = (String) input.readObject();
 
-		System.out.println(p + " has joined the game.");
+		debug(p + " has joined the game.");
 
 		fireEvent(new GameEvent(Codes.PLAYER_UPDATE,p));
 		
@@ -460,7 +469,7 @@ public class Client implements Runnable {
 
 	private void initStreams() throws IOException, ClassNotFoundException, InterruptedException {
 
-		System.out.println("Initing Client streams...");
+		debug("Initing Client streams...");
 		input = new ObjectInputStream(clientSocket.getInputStream());
 		output = new ObjectOutputStream(clientSocket.getOutputStream());
 
@@ -472,13 +481,13 @@ public class Client implements Runnable {
 		 */
 
 		waitForOK();
-		System.out.println("Connection Successful at client");
+		debug("Connection Successful at client");
 		output.writeObject(Codes.OK);
 		output.flush();
 		output.reset();
 
-		System.out.println("Connection Successfull at server");
-		System.out.println("Hi, this is " + player.getName());
+		debug("Connection Successfull at server");
+		debug("Hi, this is " + player.getName());
 	}
 
 }
