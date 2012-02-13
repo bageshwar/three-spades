@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Move;
 
@@ -172,7 +173,7 @@ public class BoardDesigner {
 	public static Object[] createBoardSkeleton(Composite parent, Form form, Composite deal, Composite hand,
 			int dealSize, int handSize) {
 		GridLayout layout4 = new GridLayout();
-		layout4.numColumns = 1;
+		layout4.numColumns = 2;
 		//layout4.verticalSpacing = 30;
 		
 
@@ -180,16 +181,18 @@ public class BoardDesigner {
 		form = toolkit.createForm(parent);
 		//form.setText("Hello, Eclipse Forms");
 		
-		form.getBody().setLayout(layout4);
-
-		/*GridLayout layout = new GridLayout();
+		form.getBody().setLayout(layout4);		
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
-		layout.verticalSpacing = 30;*/
+		layout.verticalSpacing = 30;
 		
-		/*board = new Composite(parent, SWT.NONE);
-		board.setLayout(layout);*/
+		Composite board = toolkit.createComposite(form.getBody(), SWT.NONE);
+		board.setLayout(layout);
+		
+		ScrolledForm sf = toolkit.createScrolledForm(form.getBody());
+		sf.setText("FORM");
 
-		deal = new Composite(form.getBody(), SWT.BORDER);
+		deal = toolkit.createComposite(board, SWT.BORDER);
 		// TableViewer board = new TableViewer(composite,SWT.BORDER);
 		GridLayout layout1 = new GridLayout();
 		layout1.numColumns = dealSize;
@@ -198,7 +201,7 @@ public class BoardDesigner {
 		//layout1.marginBottom = 5;
 		deal.setLayout(layout1);
 
-		hand = new Composite(form.getBody(), SWT.BORDER);
+		hand = toolkit.createComposite(board, SWT.BORDER);
 		GridLayout layout2 = new GridLayout();
 		layout2.numColumns = handSize;
 		hand.setLayout(layout2);
@@ -251,7 +254,7 @@ public class BoardDesigner {
 		holder.setToolTipText("Your turn here...");
 		String holderIcon = "icons/75/back-blue-75-2.png";
 		holder.setImage(Activator.getImageDescriptor(holderIcon).createImage());
-		selectionListener.setHolder(holder);
+		//selectionListener.setHolder(holder);
 
 		// setting up blank place holders
 		for (int i = 0; i < dealSize - deal.size() - 1; i++) {
