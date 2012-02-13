@@ -6,13 +6,14 @@ package boardview.common;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Move;
 
@@ -169,29 +170,34 @@ public class BoardDesigner {
 
 	/**
 	 * This method lays down the components for displaying the board.
+	 * @param logger 
 	 * */
-	public static Object[] createBoardSkeleton(Composite parent, Form form, Composite deal, Composite hand,
+	public static Object[] createBoardSkeleton(Composite parent, Text logger, SashForm form, Composite deal, Composite hand,
 			int dealSize, int handSize) {
 		GridLayout layout4 = new GridLayout();
-		layout4.numColumns = 2;
+		layout4.numColumns = 3;
 		//layout4.verticalSpacing = 30;
 		
-
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		form = toolkit.createForm(parent);
+		form = new SashForm(parent,SWT.HORIZONTAL);//toolkit.create(parent);
 		//form.setText("Hello, Eclipse Forms");
 		
-		form.getBody().setLayout(layout4);		
+		form.setLayout(new FillLayout());		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.verticalSpacing = 30;
 		
-		Composite board = toolkit.createComposite(form.getBody(), SWT.NONE);
+		Composite board = toolkit.createComposite(form);
 		board.setLayout(layout);
 		
-		ScrolledForm sf = toolkit.createScrolledForm(form.getBody());
-		sf.setText("FORM");
-
+		
+		//Sash s = new Sash(form.,SWT.VERTICAL);
+		
+		
+		logger = toolkit.createText(form,"",SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
+		//sf.setText("FORM");
+		logger.setEditable(false);
+		
 		deal = toolkit.createComposite(board, SWT.BORDER);
 		// TableViewer board = new TableViewer(composite,SWT.BORDER);
 		GridLayout layout1 = new GridLayout();
@@ -212,7 +218,7 @@ public class BoardDesigner {
 		for(int i=0;i<handSize;i++)
 			new Label(hand,SWT.NONE);
 		
-		return new Object[] {form, deal, hand };
+		return new Object[] {form,logger, deal, hand };
 	}
 
 	public Composite getBoard(Composite composite) {
