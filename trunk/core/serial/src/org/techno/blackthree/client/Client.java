@@ -96,9 +96,10 @@ public class Client implements Runnable {
 
 	public static void main(String s[]) {
 
+
+		
 		s = new String[]{"localhost"};
 		for (int i = 0; i < 7; i++) {
-
 			Client client = null;
 
 			if (s == null) {
@@ -299,7 +300,7 @@ public class Client implements Runnable {
 
 	private void debug(String msg) {
 		System.out.println(msg);
-		fireEvent(new GameEvent(Codes.LOG_MESSAGE,msg));
+		fireEvent(new GameEvent(Codes.INTERNAL_MESSAGE_PASSING,msg));
 		
 	}
 
