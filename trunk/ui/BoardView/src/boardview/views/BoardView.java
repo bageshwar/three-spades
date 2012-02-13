@@ -11,13 +11,14 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.part.ViewPart;
 import org.techno.blackthree.client.Client;
 import org.techno.blackthree.common.Card;
@@ -70,9 +71,10 @@ public class BoardView extends ViewPart implements GameEventListener  {
 
 	private Display display = null;
 	
-	private Form form;
+	private SashForm form;
 	private Composite deal;
 	private Composite hand;
+	private Text logger;
 	
 	Card[] cards = new Card[] { new Card(Suite.CLUB, Face.ACE) };
 	
@@ -101,10 +103,11 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		viewer.setInput(getViewSite());*/
 		
 		
-		Object[] c =BoardDesigner.createBoardSkeleton(parent, form, deal, hand,8,6);
-		form = (Form) c[0];
-		deal = (Composite) c[1];
-		hand = (Composite) c[2];
+		Object[] c =BoardDesigner.createBoardSkeleton(parent,logger, form, deal, hand,8,6);
+		form = (SashForm) c[0];
+		logger = (Text) c[1];
+		deal = (Composite) c[2];
+		hand = (Composite) c[3];
 		BoardDesigner.arrangeDeal(deal, new ArrayList<Move>(), 8,"40");
 		BoardDesigner.arrangeHand(hand, new ArrayList<Card>(), 6,"40");
 		
@@ -243,7 +246,9 @@ public class BoardView extends ViewPart implements GameEventListener  {
 				if(client!=null)
 				showMessage("User Score: "+client.getPlayer().getScore());
 				
-				updateBoard(null);
+				//updateBoard(null);
+				for(int i=0;i<300;i++)				
+					logger.setText(logger.getText()+System.currentTimeMillis()+"\r\n");
 				
 				/*ArrayList<Move> a = new ArrayList<Move>();
 				a.add(new Move(new Card(Suite.DIAMOND,Face.KING)));
@@ -364,12 +369,23 @@ public class BoardView extends ViewPart implements GameEventListener  {
 			//need to reset the deal
 			BoardDesigner.arrangeDeal(deal, new ArrayList<Move>(), 8, "40");
 		}
+		else if(code.equals(Codes.INTERNAL_MESSAGE_PASSING)){
+			updateLogs(gameEvent);
+		}
 			}
-
-			
+					
 		});
 	}
 
+	private void updateLogs(GameEvent gameEvent) {
+		//logger.setTextLimit(200);
+		//logger.setText(+logger.getText()+"\r\n");
+		logger.append(gameEvent.getPayLoad().toString()+"\r\n");
+		
+	}
+
+
+	
 	private void updateBoard(GameEvent gameEvent) {
 		try {
 			BoardDesigner.arrangeDeal(deal, (ArrayList<Move>) gameEvent.getPayLoad(), 8, "40");
@@ -417,7 +433,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 	private void updatePlayersDetails(GameEvent gameEvent) {
 		//showMessage(gameEvent.getPayLoad().toString()+" has joined");
 		
-		System.out.println(gameEvent.getPayLoad().toString()+" has joined");
+		logger.setText(gameEvent.getPayLoad().toString()+" has joined");
 	}
 
 	private void acceptDeal(GameEvent gameEvent) {
