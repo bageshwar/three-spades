@@ -185,7 +185,7 @@ public class Controller implements Runnable {
 
 			// while(!isTired()){
 
-			for(int x=0;x<5;x++){
+			for(int x=0;x<3;x++){
 			// if this is the first round, pass 0 as initial player,
 			// else pass the last rounds first player as initial player
 			currentRound = new Round(players, (currentRound == null ? 0 : currentRound.getInitialPlayer() + 1
