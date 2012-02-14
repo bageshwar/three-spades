@@ -300,7 +300,7 @@ public class Client implements Runnable {
 
 	private void debug(String msg) {
 		System.out.println(msg);
-		fireEvent(new GameEvent(Codes.INTERNAL_MESSAGE_PASSING,msg));
+		fireEvent(new GameEvent(Codes.LOG_MESSAGE,msg));
 		
 	}
 
