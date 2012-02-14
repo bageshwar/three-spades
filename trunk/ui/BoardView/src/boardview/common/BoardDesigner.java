@@ -194,8 +194,7 @@ public class BoardDesigner {
 		//Sash s = new Sash(form.,SWT.VERTICAL);
 		
 		
-		logger = toolkit.createText(form,"",SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
-		//sf.setText("FORM");
+		logger = toolkit.createText(form,"",SWT.MULTI |  SWT.V_SCROLL | SWT.WRAP );		
 		logger.setEditable(false);
 		
 		deal = toolkit.createComposite(board, SWT.BORDER);

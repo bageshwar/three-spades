@@ -430,6 +430,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 		//showMessage(gameEvent.getPayLoad().toString()+" has joined");
 		
 		logger.setText(gameEvent.getPayLoad().toString()+" has joined");
+		
 	}
 
 	private void acceptDeal(GameEvent gameEvent) {
