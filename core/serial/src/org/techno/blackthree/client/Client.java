@@ -253,13 +253,17 @@ public class Client implements Runnable {
 		currentBoard = (ArrayList<Move>) input.readObject();
 		fireEvent(new GameEvent(Codes.BOARD_UPDATE,currentBoard));
 		
+		//need to log the current card played, ideally it should be the last item in the list.
+		if(currentBoard.size()!=0)
+			debug(currentBoard.get(currentBoard.size()-1).toExtendedString());
+		
 	}
 
 	private void updateScore() throws IOException, ClassNotFoundException {
 		Integer score = (Integer) input.readObject();
 		this.player.setScore(score);
 		fireEvent(new GameEvent(Codes.SCORE_UPDATE,null));
-		
+		debug("You get "+score+" points");
 	}
 
 	private void makeAMove() throws IOException {
