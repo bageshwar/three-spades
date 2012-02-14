@@ -102,5 +102,21 @@ public class Codes {
 	 * */
 	public static final String INTERNAL_MESSAGE_PASSING="INTERNAL_MESSAGE_PASSING";
 	
+	/**
+	 * Message to updated in the Log Console
+	 * */
 	public static final String LOG_MESSAGE="LOG_MESSAGE";
+	
+	/**
+	 * Client/Server disconnected
+	 * */
+	public static final String DISCONNECTED = "DISCONNECTED";
+	
+	public static final String PLAYER_DISCONNECTED = "PLAYER_DISCONNECTED";
+	public static final String PLAYER_CONNECTED = "PLAYER_CONNECTED";
+	public static final String PLAYER_JOINED = "PLAYER_JOINED";
+	
+	/**
+	 * Server Side Codes
+	 * */
 }

@@ -4,24 +4,35 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.techno.blackthree.common.event.GameEventListener;
+
 /**
  * @author bageshwp
  * */
 public class Server {
 
+	public static final int PLAYER_COUNT=8;
+	public static final int CARD_COUNT=48;
+	public static final int SERVER_POLL_TIME=2000;
+	public static final int CLIENT_POLL_TIME=5000;
+	
 	Controller controller;
 	
 	
 	
 	public final static int SERVER_PORT = 12346;
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		@SuppressWarnings("unused")
 		Server server = new Server(args);
 		server.init();
 		
 	}
 
+	
+	public void addGameEventListener(GameEventListener listener){
+		controller.addGameEventListener(listener);
+	}
 	/**
 	 * 
 	 * Returns the Controller
@@ -30,10 +41,10 @@ public class Server {
 		return controller;
 	}
 	
-	private void init() {
+	private void init() throws IOException {
 		// bind a socket
 
-		try {
+		
 			ServerSocket socket = new ServerSocket(SERVER_PORT);
 			System.out.println("Listening on port # " + SERVER_PORT);			
 			int counter = 0;
@@ -50,10 +61,7 @@ public class Server {
 			System.out.println("All players have joined...");
 			
 			new Thread(controller).start();			
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
+		
 
 	}
 
@@ -76,7 +84,7 @@ public class Server {
 	}
 	int size;
 	
-	public void start(){
+	public void start() throws IOException{
 		init();
 	}
 }

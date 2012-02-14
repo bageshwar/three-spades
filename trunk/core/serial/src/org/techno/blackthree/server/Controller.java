@@ -6,6 +6,7 @@ package org.techno.blackthree.server;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -64,7 +65,8 @@ public class Controller implements Runnable {
 	 * A synchronous method, that initializes the player, 
 	 * and sends other player updates about this.
 	 * */
-	public void addPlayer(int index,Socket s) {
+	@SuppressWarnings("unchecked")
+	public void addPlayer(final int index,final Socket s) {
 		
 				
 		
@@ -78,7 +80,9 @@ public class Controller implements Runnable {
 					// send all the initial player's update to this player
 					p.sendAllPlayersUpdate(players);
 					//p.sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
-					fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,p.getPlayer().getName()));
+					fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,Arrays.asList(
+							index,Codes.PLAYER_CONNECTED,p.getPlayer().getName(),s.getInetAddress().getCanonicalHostName()) 
+							));
 					
 					sendPlayerUpdate(p.getPlayer().getName());
 					sendMessage("Waiting for " + (size - index - 1) + "/" + size + " players ");
@@ -98,6 +102,31 @@ public class Controller implements Runnable {
 				if (p != null) {
 					System.out.println("Player # " + index + " joined the game");
 					players[index] = p;
+					
+					fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,Arrays.asList(
+							index,Codes.PLAYER_JOINED,p.getPlayer().getName(),s.getInetAddress().getCanonicalHostName()) 
+					));
+					
+					//start a new thread for polling.
+					new Thread(new Runnable(){
+
+						@Override
+						public void run() {
+							boolean connected=true;
+							while(connected){
+								connected = s.isConnected();
+								try {
+									Thread.sleep(Server.SERVER_POLL_TIME);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+							//disconnected
+							fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,Arrays.asList(
+									index,Codes.PLAYER_DISCONNECTED,"N/A","N/A") 
+							));
+							
+						}}).start();
 				}
 			}
 
@@ -130,8 +159,7 @@ public class Controller implements Runnable {
 
 	public void fireGameEvent(GameEvent gameEvent){
 		System.out.println("Game Event: "+gameEvent);
-		for(Object o: gameEventListeners.getListenerList() ){
-			System.out.println(o.getClass());
+		for(Object o: gameEventListeners.getListenerList() ){			
 			if(o instanceof GameEventListener){
 			GameEventListener gel = (GameEventListener) o;
 			gel.consumeGameEvent(gameEvent);

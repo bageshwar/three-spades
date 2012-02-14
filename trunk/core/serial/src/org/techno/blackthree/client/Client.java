@@ -494,5 +494,28 @@ public class Client implements Runnable {
 		debug("Connection Successfull at server");
 		debug("Hi, this is " + player.getName());
 	}
+	
+	public void poll(){
+		//start a thread and keep polling the client
+		new Thread(new Runnable(){
 
+			@Override
+			public void run() {
+				boolean connected =true;
+				while(connected){
+					connected=clientSocket.isConnected();
+					try {
+						Thread.sleep(Server.CLIENT_POLL_TIME);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				//disconnected.
+				fireEvent(new GameEvent(Codes.DISCONNECTED,null));
+			}
+			
+			
+		}).start();
+		
+	}
 }

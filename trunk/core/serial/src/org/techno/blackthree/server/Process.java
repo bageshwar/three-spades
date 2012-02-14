@@ -110,9 +110,6 @@ public class Process implements Runnable {
 
 	}
 
-	public void sendRoundSummary() {
-
-	}
 
 	/**
 	 * Summarize the results and push it to the player.
