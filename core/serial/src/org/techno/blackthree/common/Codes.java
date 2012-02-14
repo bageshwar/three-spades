@@ -92,7 +92,15 @@ public class Codes {
 	 * */
 	public static final String ALL_PLAYERS_JOINED = "ALL_PLAYERS_JOINED";
 	
+	/**
+	 * Send a score update to the client.
+	 * */
 	public static final String SCORE_UPDATE = "SCORE_UPDATE";
 	
+	/**
+	 * For Internal Use
+	 * */
 	public static final String INTERNAL_MESSAGE_PASSING="INTERNAL_MESSAGE_PASSING";
+	
+	public static final String LOG_MESSAGE="LOG_MESSAGE";
 }
