@@ -16,6 +16,22 @@
             id="boardview.views.BoardView">
       </view>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Black Three"
+            id="BlackThree">
+      </category>
+      <view
+            name="Server Console"
+            icon="icons/sample.gif"
+            category="BlackThree"
+            class="boardview.views.ServerConsoleView"
+            id="boardview.views.ServerConsoleView">
+      </view>
+   </extension>
+   
    <extension
          point="org.eclipse.help.contexts">
       <contexts
