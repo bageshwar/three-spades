@@ -50,4 +50,7 @@ public class Move implements Serializable {
 		return card.toString();
 	}
 
+	public String toExtendedString(){
+		return player.toString()+" moved "+card.toString();
+	}
 }

@@ -246,10 +246,6 @@ public class BoardView extends ViewPart implements GameEventListener  {
 				if(client!=null)
 				showMessage("User Score: "+client.getPlayer().getScore());
 				
-				//updateBoard(null);
-				for(int i=0;i<300;i++)				
-					logger.setText(logger.getText()+System.currentTimeMillis()+"\r\n");
-				
 				/*ArrayList<Move> a = new ArrayList<Move>();
 				a.add(new Move(new Card(Suite.DIAMOND,Face.KING)));
 				a.add(new Move(new Card(Suite.CLUB,Face.QUEEN)));
