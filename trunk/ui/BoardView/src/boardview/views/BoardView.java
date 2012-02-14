@@ -369,7 +369,7 @@ public class BoardView extends ViewPart implements GameEventListener  {
 			//need to reset the deal
 			BoardDesigner.arrangeDeal(deal, new ArrayList<Move>(), 8, "40");
 		}
-		else if(code.equals(Codes.INTERNAL_MESSAGE_PASSING)){
+		else if(code.equals(Codes.LOG_MESSAGE )){
 			updateLogs(gameEvent);
 		}
 			}
