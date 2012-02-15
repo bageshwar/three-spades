@@ -61,6 +61,12 @@ public class Controller implements Runnable {
 		return size;
 	}
 
+	private void debug(String msg) {
+		System.out.println(msg);
+		fireGameEvent(new GameEvent(Codes.LOG_MESSAGE,msg));
+		
+	}
+	
 	/**
 	 * A synchronous method, that initializes the player, 
 	 * and sends other player updates about this.
@@ -100,7 +106,7 @@ public class Controller implements Runnable {
 
 				// adding this player to the list if all goes well.
 				if (p != null) {
-					System.out.println("Player # " + index + " joined the game");
+					debug("Player # " + index + " joined the game");
 					players[index] = p;
 					
 					fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,Arrays.asList(
@@ -275,12 +281,12 @@ public class Controller implements Runnable {
 			
 			}
 		}
-		System.out.println(scores);
+		debug(scores.toString());
 	}
 
 	private void sendPartnerCardsAndTriumph() throws IOException {
 
-		System.out.println("Round Parameters : "+currentRound.getRoundParameters().toString());
+		debug("Round Parameters : "+currentRound.getRoundParameters().toString());
 		for (Process p : players) {
 			if (p == null)
 				continue;
@@ -317,7 +323,7 @@ public class Controller implements Runnable {
 	}
 
 	private void sendBidUpdate(RoundParameters roundParams) throws IOException {
-		System.out.println("Sending Bid update");
+		debug("Sending Bid update");
 		//System.out.println(roundParams);
 		for (Process p : players) {
 			if (p == null)
