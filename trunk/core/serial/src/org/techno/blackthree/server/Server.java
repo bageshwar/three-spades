@@ -32,6 +32,7 @@ public class Server {
 
 	public void stop() {
 		try {
+			controller.stopAllPlayers();
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
