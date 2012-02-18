@@ -199,8 +199,10 @@ public class Round implements Serializable {
 				commoners.add(p);
 		}
 
-		debug("King's Men "+kingsMen);
-		debug("Commoners "+commoners);
+		//disabling the debug for security reasons
+		
+		//debug("King's Men "+kingsMen);
+		//debug("Commoners "+commoners);
 	}
 
 	
@@ -246,6 +248,8 @@ public class Round implements Serializable {
 			debug(currentBoard.getMoves().toString());
 			// summarize the board
 			currentBoard.summarizeBoard();
+			
+			//send who was the winner
 			currentPlayerToPlay = currentBoard.getWinner().getSequenceNo();
 			// reset the current board
 			currentBoard = null;
