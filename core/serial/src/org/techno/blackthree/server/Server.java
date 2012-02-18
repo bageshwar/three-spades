@@ -21,6 +21,8 @@ public class Server {
 	
 	ServerSocket socket=null;
 	
+	boolean serverStarted = false;
+	
 	public final static int SERVER_PORT = 12346;
 
 	public static void main(String args[]) throws IOException {
@@ -36,13 +38,13 @@ public class Server {
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally {
+			serverStarted = false;
 		}
 	}
 	
 	public boolean isStarted(){
-		if(socket==null)
-			return false;
-		return socket.isBound(); 
+		return serverStarted;
 	}
 	
 	public void addGameEventListener(GameEventListener listener){
@@ -63,6 +65,7 @@ public class Server {
 			socket = new ServerSocket(SERVER_PORT);
 			debug("Listening on port # " + SERVER_PORT);			
 			int counter = 0;
+			serverStarted = true;
 			while (counter < controller.getSize()) {
 				//System.out.println(counter+"...");
 				Socket s = socket.accept();

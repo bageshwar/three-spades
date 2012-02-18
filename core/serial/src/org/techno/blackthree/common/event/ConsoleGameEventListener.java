@@ -40,6 +40,10 @@ public class ConsoleGameEventListener  {
 		me.fireGameEvent(new GameEvent(Codes.LOG_MESSAGE,msg));
 		
 	}
+	
+	public static void castMessage(String msg){
+		// need to cast a msg to all connected players.
+	}
 
 	private void fireGameEvent(GameEvent gameEvent) {
 		for(GameEventListener gel: listeners ){
