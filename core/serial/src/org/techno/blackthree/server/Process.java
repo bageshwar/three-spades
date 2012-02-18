@@ -384,4 +384,16 @@ public class Process implements Runnable {
 		output.reset();
 	}
 
+	/**
+	 * Close all the resources.
+	 * */
+	public void stop() throws IOException {
+		output.writeObject(Codes.DISCONNECTED);
+		output.flush();
+		output.reset();
+		output.close();
+		socket.close();
+		
+	}
+
 }

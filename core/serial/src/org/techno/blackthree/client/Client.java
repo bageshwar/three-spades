@@ -246,6 +246,17 @@ public class Client implements Runnable {
 			updateScore();
 		else if(s.equals(Codes.BOARD_UPDATE))
 			updateBoard();
+		else if(s.equals(Codes.DISCONNECTED))
+			disconnected();
+	}
+
+	private void disconnected() {
+		try {
+			this.clientSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fireEvent(new GameEvent(Codes.DISCONNECTED,null));
 	}
 
 	private void updateBoard() throws IOException, ClassNotFoundException {
@@ -511,7 +522,7 @@ public class Client implements Runnable {
 					}
 				}
 				//disconnected.
-				fireEvent(new GameEvent(Codes.DISCONNECTED,null));
+				disconnected();
 			}
 			
 			

@@ -47,6 +47,22 @@ public class Controller implements Runnable {
 		this.tired = tired;
 	}
 
+	public void stopAllPlayers(){
+		for (Process p : players) {
+
+			// to filter out null players and the currently joined player
+			if (p == null)
+				continue;
+
+			try {
+				p.stop() ;
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	/**
 	 * An array, since number of players is fixed.
 	 * */
