@@ -230,32 +230,12 @@ public class BoardView extends ViewPart implements GameEventListener {
 		};
 		host.setText("Host");
 		host.setToolTipText("Host a new Game");
-		host.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_NEW_WIZARD));
+		host.setImageDescriptor(Activator.getImageDescriptor("icons/host.png"));
 
 		score = new Action() {
 			public void run() {
 				if (client != null)
-					showMessage("User Score: " + client.getPlayer().getScore());
-
-				/*
-				 * ArrayList<Move> a = new ArrayList<Move>(); a.add(new Move(new
-				 * Card(Suite.DIAMOND,Face.KING))); a.add(new Move(new
-				 * Card(Suite.CLUB,Face.QUEEN))); a.add(new Move(new
-				 * Card(Suite.SPADE,Face.JACK))); a.add(new Move(new
-				 * Card(Suite.HEART,Face.TEN)));
-				 * 
-				 * ArrayList<Card> myCards = new ArrayList<Card>();
-				 * myCards.add(new Card(Suite.DIAMOND,Face.KING));
-				 * myCards.add(new Card(Suite.CLUB,Face.QUEEN)); myCards.add(new
-				 * Card(Suite.SPADE,Face.JACK)); myCards.add(new
-				 * Card(Suite.HEART,Face.TEN)); myCards.add(new
-				 * Card(Suite.CLUB,Face.TEN)); myCards.add(new
-				 * Card(Suite.SPADE,Face.ACE));
-				 * 
-				 * DealDialog dd = new DealDialog(display.getActiveShell(),a);
-				 * dd.setMyCards(myCards); dd.open();
-				 */
+					showMessage("User Score: " + client.getPlayer().getScore());				
 			}
 		};
 		score.setText("Score");
@@ -347,6 +327,12 @@ public class BoardView extends ViewPart implements GameEventListener {
 	private void disconnected(GameEvent gameEvent) {
 		
 		showMessage("Disconnected");
+		
+		//cleanup
+		logger.setText("");
+		
+		BoardDesigner.arrangeDeal(deal, new ArrayList<Move>(), 8, "40");
+		BoardDesigner.arrangeHand(hand, new ArrayList<Card>(), 6, "40");
 		
 	}
 	
