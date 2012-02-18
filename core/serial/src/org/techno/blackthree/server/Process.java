@@ -3,6 +3,8 @@
  */
 package org.techno.blackthree.server;
 
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,7 +12,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.techno.blackthree.common.Board;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
@@ -32,9 +33,8 @@ public class Process implements Runnable {
 	 * */
 	private Player player; 
 	private Socket socket;
-
-	private int sequenceNo;
 	
+	private int sequenceNo;
 	
 
 	private boolean tired = false;
@@ -61,7 +61,7 @@ public class Process implements Runnable {
 		while (!monitor)
 			try {
 				Thread.sleep(500);
-				System.out.println("Sleeping for monitor to be notified.");
+				debug("Sleeping for monitor to be notified.");
 			} catch (InterruptedException e) {
 
 				e.printStackTrace();
@@ -78,7 +78,7 @@ public class Process implements Runnable {
 	@Override
 	public void run() {
 
-		System.out.println("New Process at server started for player ");
+		debug("New Process at server started for player ");
 
 		try {
 
@@ -149,7 +149,7 @@ public class Process implements Runnable {
 
 	private void initStreams() throws IOException, ClassNotFoundException {
 
-		System.out.println("Initing Server streams...");
+		debug("Initing Server streams...");
 		output = new ObjectOutputStream(socket.getOutputStream());
 
 		input = new ObjectInputStream(socket.getInputStream());
@@ -157,10 +157,10 @@ public class Process implements Runnable {
 		output.writeObject(Codes.OK);
 		output.flush();
 		output.reset();
-		// System.out.println("wrote "+Codes.OK);
+		// console.debug("wrote "+Codes.OK);
 		String s = (String) input.readObject();
 		if (Codes.OK.equalsIgnoreCase(s))
-			System.out.println("Connection Successfull");
+			debug("Connection Successfull");
 
 	}
 
@@ -175,7 +175,7 @@ public class Process implements Runnable {
 		Object o = input.readObject();
 		try {
 			player = (Player) o;
-			System.out.println("Server recieved new player: " + player.getName());
+			debug("Server recieved new player: " + player.getName());
 
 			output.writeObject(Codes.OK);
 			output.flush();
@@ -191,7 +191,7 @@ public class Process implements Runnable {
 
 	public Process(Socket socket, int sequence) throws IOException, ClassNotFoundException, InvalidDataStreamException {
 		this.socket = socket;
-		this.sequenceNo = sequence;
+		this.sequenceNo = sequence;		
 		initStreams();
 		initPlayerInfo();
 

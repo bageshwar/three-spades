@@ -3,6 +3,7 @@
  */
 package org.techno.blackthree.common;
 
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -115,15 +116,15 @@ public class Board implements Serializable {
 			 * */
 			if(m.getCard().getSuite().equals(firstPlayerMove.getCard().getSuite())){
 				//same suite
-				//System.out.println("Suite "+m+" Internal: "+m.getCard().getInternalValue()+" W:"+maxTriumphWeight );
+				//debug("Suite "+m+" Internal: "+m.getCard().getInternalValue()+" W:"+maxTriumphWeight );
 				if(m.getCard().getInternalValue()>maxSuiteWeight ){
 					maxSuiteWeight = m.getCard().getInternalValue();
 					maxSuitePlayer = p;
-					//System.out.println("Max suite "+maxSuiteWeight);
+					//debug("Max suite "+maxSuiteWeight);
 				}
 			}else if(m.getCard().getSuite().equals(params.getTriumph())){
 				//triumph
-				//System.out.println("Trump "+m+" Internal: "+m.getCard().getInternalValue()+" W:"+maxTriumphWeight );
+				//debug("Trump "+m+" Internal: "+m.getCard().getInternalValue()+" W:"+maxTriumphWeight );
 				if(m.getCard().getInternalValue()>maxTriumphWeight ){
 					maxTriumphWeight = m.getCard().getInternalValue();
 					maxTriumphPlayer = p;					
@@ -138,7 +139,7 @@ public class Board implements Serializable {
 			this.winner = (maxSuitePlayer==null)?firstPlayer:maxSuitePlayer;
 		}
 		
-		System.out.println("\u265b is "+winner+" > "+moves.get(winner)+" and Total Score="+score);
+		debug("\u265b is "+winner+" > "+moves.get(winner)+" and Total Score="+score);
 		
 	}
 	
