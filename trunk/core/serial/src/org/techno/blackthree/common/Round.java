@@ -250,6 +250,9 @@ public class Round implements Serializable {
 			currentBoard.summarizeBoard();
 			
 			//send who was the winner
+			sendMessageToAll("\u265b is "+currentBoard.getWinner().getPlayer().getName()+" > "+
+					currentBoard.getMoves().get(currentBoard.getWinner())+" and Total Score="+currentBoard.getScore());
+			
 			currentPlayerToPlay = currentBoard.getWinner().getSequenceNo();
 			// reset the current board
 			currentBoard = null;
@@ -257,6 +260,13 @@ public class Round implements Serializable {
 		}
 		summarizeRound();
 
+	}
+
+	private void sendMessageToAll(String string) throws IOException {
+		for (Process p : players) {
+			p.sendMessage(string);
+		}
+		
 	}
 
 	/**

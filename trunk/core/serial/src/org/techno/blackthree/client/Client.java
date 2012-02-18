@@ -381,7 +381,7 @@ public class Client implements Runnable {
 
 	private void processAdhocMessage() throws IOException, ClassNotFoundException {
 		String msg = (String) input.readObject();
-		debug(player.getName() + " <<ServerCast>> " + msg);
+		debug("<<ServerCast>> " + msg);
 
 	}
 

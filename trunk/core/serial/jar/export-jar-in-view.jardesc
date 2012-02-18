@@ -27,5 +27,6 @@
         <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common.event{GameEvent.java"/>
         <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common{Suite.java"/>
         <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.server{Process.java"/>
+        <javaElement handleIdentifier="=BlackThree/src&lt;org.techno.blackthree.common.event{ConsoleGameEventListener.java"/>
     </selectedElements>
 </jardesc>
