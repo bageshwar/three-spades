@@ -8,8 +8,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+
+import boardview.Activator;
 
 /**
  * @author Bageshwar
@@ -43,7 +44,7 @@ public class ClientInfoWidget extends Composite {
 	Label ping;
 	
 	public ClientInfoWidget(Composite parent,FormToolkit toolkit ) {
-		super(parent, SWT.NO_BACKGROUND);
+		super(parent, SWT.BORDER);
 		
 		//create an image [con/discon]
 		//label player name
@@ -55,19 +56,24 @@ public class ClientInfoWidget extends Composite {
 		//gd.
 		this.setLayout(gd);
 		
-		icon = toolkit.createLabel(this, "Icon",SWT.NONE);		
+		icon = toolkit.createLabel(this, "",SWT.NONE);
+		//icon = new Label(parent,SWT.NONE);
 		GridData g1 = new GridData(20,20);
 		g1.grabExcessHorizontalSpace=true;
 		g1.horizontalAlignment = SWT.LEFT;
 		icon.setLayoutData(g1);
+		icon.setImage(
+				Activator.getImageDescriptor("icons/disconnected.jpg").createImage());
 		
 		name = toolkit.createLabel(this, "Name",SWT.NONE);
+		//name = new Label(parent,SWT.NONE);
 		GridData g2 = new GridData(200,20);
 		g2.grabExcessHorizontalSpace=true;
 		g2.horizontalAlignment = SWT.LEFT;
 		name.setLayoutData(g2);
 		
 		ping = toolkit.createLabel(this, "Ping",SWT.NONE);
+		//ping = new Label(parent,SWT.NONE);
 		GridData g3 = new GridData(40,20);
 		g3.grabExcessHorizontalSpace=true;
 		g3.horizontalAlignment = SWT.LEFT;
