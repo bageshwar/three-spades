@@ -53,7 +53,25 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
-
+		
+		Server s = Activator.getDefault().getServer();
+		if(s!=null){
+			for(GameEventListener gel:s.getController().getGameEventListeners()){
+				if(gel instanceof ServerConsoleView){
+					//this = gel;
+					ServerConsoleView sc = (ServerConsoleView) gel;
+					this.form = sc.form;
+					this.monitor = sc.monitor;
+					this.logger = sc.logger;
+					this.server = sc.server;
+					this.start = sc.start;
+					this.toolkit = sc.toolkit;
+					
+					return;
+				}
+			}
+		}
+		
 		display = parent.getDisplay();
 
 		toolkit = new FormToolkit(parent.getDisplay());
@@ -111,10 +129,28 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 
 							@Override
 							public void run() {
-								server = new Server(new String[] { "8" });
-								server.addGameEventListener(ServerConsoleView.this);
+								if(server==null){
+									server = new Server(new String[] { "8" });
+									server.addGameEventListener(ServerConsoleView.this);
+								}
 								try {
-									server.start();
+									if(server.isStarted()){
+										//stop server change icon
+										server.stop();
+										start.setText("Start");
+										start.setToolTipText("Start Server");
+										start.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+												ISharedImages.IMG_TOOL_NEW_WIZARD));
+									}
+									else {
+										//start server change icon
+										server.start();	
+										start.setText("Stop");
+										start.setToolTipText("Stop Server");
+										start.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+												ISharedImages.IMG_ELCL_STOP));
+									}
+									
 								} catch (IOException e) {
 									e.printStackTrace();
 									showMessage(e.getMessage());
@@ -133,7 +169,7 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 		start.setText("Start");
 		start.setToolTipText("Start Server");
 		start.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_NEW_WIZARD));
+				ISharedImages.IMG_TOOL_UP));
 	}
 
 	@Override
@@ -157,6 +193,9 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 				if (code.equals(Codes.PLAYER_UPDATE)) {
 					updatePlayer(gameEvent);
 				}
+				else if(code.equals(Codes.LOG_MESSAGE)){
+					logger.append(gameEvent.getPayLoad().toString()+"\r\n");
+				}
 
 			}
 		});
@@ -174,7 +213,7 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 		String hostName = (String) payload.get(3);
 
 		((ClientInfoWidget) (monitor.getChildren()[index])).getIcon().setText(status);
-		((ClientInfoWidget) (monitor.getChildren()[index])).getName().setText(playerName + "@" + hostName);
+		((ClientInfoWidget) (monitor.getChildren()[index])).getNameLabel().setText(playerName + "@" + hostName);
 		((ClientInfoWidget) (monitor.getChildren()[index])).getPing().setText(System.currentTimeMillis() + "");
 
 	}
@@ -196,4 +235,6 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 	private void showMessage(String message) {
 		MessageDialog.openInformation(display.getActiveShell(), "Board View", message);
 	}
+	
+	
 }
