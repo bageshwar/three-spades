@@ -1,5 +1,6 @@
 package org.techno.blackthree.server;
 
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,7 +19,7 @@ public class Server {
 	
 	Controller controller;
 	
-	
+	ServerSocket socket=null;
 	
 	public final static int SERVER_PORT = 12346;
 
@@ -29,6 +30,19 @@ public class Server {
 		
 	}
 
+	public void stop() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isStarted(){
+		if(socket==null)
+			return false;
+		return socket.isBound(); 
+	}
 	
 	public void addGameEventListener(GameEventListener listener){
 		controller.addGameEventListener(listener);
@@ -45,8 +59,8 @@ public class Server {
 		// bind a socket
 
 		
-			ServerSocket socket = new ServerSocket(SERVER_PORT);
-			System.out.println("Listening on port # " + SERVER_PORT);			
+			socket = new ServerSocket(SERVER_PORT);
+			debug("Listening on port # " + SERVER_PORT);			
 			int counter = 0;
 			while (counter < controller.getSize()) {
 				//System.out.println(counter+"...");

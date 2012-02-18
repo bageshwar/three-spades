@@ -155,6 +155,11 @@ public class Controller implements Runnable {
 	
 	 public void addGameEventListener(GameEventListener l) {
 		 gameEventListeners.add( l);
+		 
+	 }
+	 
+	 public ArrayList<GameEventListener> getGameEventListeners(){
+		 return gameEventListeners;
 	 }
 
 	 public void removeGameEventListener(GameEventListener l) {
