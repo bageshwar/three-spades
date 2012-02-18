@@ -2,7 +2,7 @@
  * 
  */
 package org.techno.blackthree.common;
-
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -111,13 +111,13 @@ public class Round implements Serializable {
 		// if player passed
 		if (response == -1) {
 			playersPassed++;
-			System.out.println(players[nextPlayerToBid] + " passed");
+			debug(players[nextPlayerToBid] + " passed");
 		} else
-			System.out.println(players[nextPlayerToBid] + " bid " + response);
+			debug(players[nextPlayerToBid] + " bid " + response);
 
 		// if all players passed.
 		if (playersPassed == players.length - 1) {
-			System.out.println("All players passed.[" + players[roundParams.getKing()].toString() + " >> "
+			debug("All players passed.[" + players[roundParams.getKing()].toString() + " >> "
 					+ roundParams.getMaxBid() + "]: start the game");
 			return -1;
 		}
@@ -131,12 +131,12 @@ public class Round implements Serializable {
 			roundParams.setKing(nextPlayerToBid);
 			playersPassed = 0;
 			roundParams.setKingPlayer(players[nextPlayerToBid].getPlayer().getName());
-			System.out.println("We have a new King: " + players[nextPlayerToBid].toString());
+			debug("We have a new King: " + players[nextPlayerToBid].toString());
 		}
 
 		// if this is the max bid
 		if (roundParams.getMaxBid() == 250) {
-			System.out.println("Found Ultimate Max bid[" + players[roundParams.getKing()].toString()
+			debug("Found Ultimate Max bid[" + players[roundParams.getKing()].toString()
 					+ "]: start the game");
 			return -1;
 		}
@@ -199,8 +199,8 @@ public class Round implements Serializable {
 				commoners.add(p);
 		}
 
-		System.out.println("King's Men "+kingsMen);
-		System.out.println("Commoners "+commoners);
+		debug("King's Men "+kingsMen);
+		debug("Commoners "+commoners);
 	}
 
 	
@@ -226,7 +226,7 @@ public class Round implements Serializable {
 				// iterate players.length no of times, access players by idx.
 				boardUpdate(currentBoard);
 				move = players[currentPlayerToPlay].makeAMove();
-				// System.out.println("Player moved" +
+				// debug("Player moved" +
 				// players[currentPlayerToPlay] + " " + move);
 				currentBoard.addMove(players[currentPlayerToPlay], move);
 				// -->next player
@@ -243,7 +243,7 @@ public class Round implements Serializable {
 
 			}
 			boardUpdate(currentBoard);
-			System.out.println(currentBoard.getMoves());
+			debug(currentBoard.getMoves().toString());
 			// summarize the board
 			currentBoard.summarizeBoard();
 			currentPlayerToPlay = currentBoard.getWinner().getSequenceNo();
@@ -311,7 +311,7 @@ public class Round implements Serializable {
 
 		}
 
-		System.out.println(scores);
+		debug(scores.toString());
 	}
 
 }

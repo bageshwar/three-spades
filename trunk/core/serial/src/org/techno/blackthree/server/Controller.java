@@ -3,6 +3,8 @@
  */
 package org.techno.blackthree.server;
 
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -10,13 +12,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.swing.event.EventListenerList;
-
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.InvalidDataStreamException;
 import org.techno.blackthree.common.Round;
 import org.techno.blackthree.common.RoundParameters;
+import org.techno.blackthree.common.event.ConsoleGameEventListener;
 import org.techno.blackthree.common.event.GameEvent;
 import org.techno.blackthree.common.event.GameEventListener;
 
@@ -29,8 +30,9 @@ import org.techno.blackthree.common.event.GameEventListener;
 public class Controller implements Runnable {
 
 
-	EventListenerList gameEventListeners;
+	ArrayList<GameEventListener> gameEventListeners;
 	
+		
 	private int size;
 	
 	private boolean tired = false;
@@ -61,11 +63,7 @@ public class Controller implements Runnable {
 		return size;
 	}
 
-	private void debug(String msg) {
-		System.out.println(msg);
-		fireGameEvent(new GameEvent(Codes.LOG_MESSAGE,msg));
-		
-	}
+	
 	
 	/**
 	 * A synchronous method, that initializes the player, 
@@ -156,20 +154,18 @@ public class Controller implements Runnable {
 
 	
 	 public void addGameEventListener(GameEventListener l) {
-		 gameEventListeners.add(GameEventListener.class, l);
+		 gameEventListeners.add( l);
 	 }
 
 	 public void removeGameEventListener(GameEventListener l) {
-		 gameEventListeners.remove(GameEventListener.class, l);
+		 gameEventListeners.remove( l);
 	 }
 
 	public void fireGameEvent(GameEvent gameEvent){
 		System.out.println("Game Event: "+gameEvent);
-		for(Object o: gameEventListeners.getListenerList() ){			
-			if(o instanceof GameEventListener){
-			GameEventListener gel = (GameEventListener) o;
+		for(GameEventListener gel: gameEventListeners ){
 			gel.consumeGameEvent(gameEvent);
-			}
+		
 		}
 	}
 
@@ -181,7 +177,8 @@ public class Controller implements Runnable {
 		rounds = new ArrayList<Round>();
 		threadGroup = new ThreadGroup("PlayersProcessThreadGroup");
 		scores = new HashMap<Process,Integer>();
-		gameEventListeners = new EventListenerList();
+		gameEventListeners = new ArrayList<GameEventListener>();
+		ConsoleGameEventListener.addGameEventListeners(gameEventListeners);
 	}
 
 	/**
