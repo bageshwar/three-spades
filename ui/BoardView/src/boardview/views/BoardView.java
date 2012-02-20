@@ -178,6 +178,21 @@ public class BoardView extends ViewPart implements GameEventListener {
 		connect = new Action() {
 			public void run() {
 
+				//if already connected, disconnect
+				
+				if(client!=null && client.isConnected()){
+					//need to disconnect
+					try {
+						client.disconnect();
+						connect.setText("Connect");
+						connect.setToolTipText("Connect to a Server");
+						connect.setImageDescriptor(Activator.getImageDescriptor("icons/green.png"));
+					} catch (IOException e) {
+						e.printStackTrace();
+						showMessage(e.getMessage());
+					}
+				} else {
+				
 				// get the ip address and port number
 				ConnectDialog connectDialog = new ConnectDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell());
 				connectDialog.setDefaultValues(Activator.getDefault().getPlayerName(), Activator.getDefault()
@@ -201,6 +216,9 @@ public class BoardView extends ViewPart implements GameEventListener {
 						Activator.getDefault().setPlayerName(connectDialog.getName());
 						Activator.getDefault().setDefaultPort(connectDialog.getPort());
 						Activator.getDefault().setDefaultHost(connectDialog.getHost());
+						connect.setText("Dis-connect");
+						connect.setToolTipText("Dis-connect from Server");
+						connect.setImageDescriptor(Activator.getImageDescriptor("icons/red.png"));
 
 					} catch (UnknownHostException e) {
 						e.printStackTrace();
@@ -210,11 +228,11 @@ public class BoardView extends ViewPart implements GameEventListener {
 						showMessage(e.getMessage());
 					}
 			}
+			}
 		};
 		connect.setText("Connect");
 		connect.setToolTipText("Connect to a Server");
-		connect.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_ETOOL_HOME_NAV));
+		connect.setImageDescriptor(Activator.getImageDescriptor("icons/green.png"));
 
 		host = new Action() {
 			public void run() {
