@@ -12,7 +12,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import org.techno.blackthree.common.Board;
 import org.techno.blackthree.common.Card;
 import org.techno.blackthree.common.Codes;
 import org.techno.blackthree.common.Move;
@@ -30,6 +29,11 @@ import org.techno.blackthree.server.Server;
 @SuppressWarnings("unused")
 public class Client implements Runnable {
 
+	/**
+	 * Flag tells if the client is connected.
+	 * */
+	boolean connected =true;
+	
 	ArrayList<Move> currentBoard;
 	
 	/**
@@ -159,7 +163,7 @@ public class Client implements Runnable {
 		
 	}
 	
-	public Client(String host, int port, GameEventListener listener){
+	private Client(String host, int port, GameEventListener listener){
 		
 	}
 
@@ -199,6 +203,7 @@ public class Client implements Runnable {
 		} catch (IOException e) {
 			
 			e.printStackTrace();
+			disconnected();
 		} catch (ClassNotFoundException e) {
 			
 			e.printStackTrace();
@@ -250,9 +255,18 @@ public class Client implements Runnable {
 			disconnected();
 	}
 
+	public void disconnect() throws IOException{
+		this.clientSocket.close();
+		connected=false;
+	}
+	
+	public boolean isConnected(){
+		return connected;
+	}
+	
 	private void disconnected() {
 		try {
-			this.clientSocket.close();
+			disconnect();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -498,6 +512,7 @@ public class Client implements Runnable {
 
 		waitForOK();
 		debug("Connection Successful at client");
+		connected=true;
 		output.writeObject(Codes.OK);
 		output.flush();
 		output.reset();
@@ -511,8 +526,7 @@ public class Client implements Runnable {
 		new Thread(new Runnable(){
 
 			@Override
-			public void run() {
-				boolean connected =true;
+			public void run() {				
 				while(connected){
 					connected=clientSocket.isConnected();
 					try {
