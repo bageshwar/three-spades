@@ -44,6 +44,13 @@ public class ConsoleGameEventListener  {
 	public static void castMessage(String msg){
 		// need to cast a msg to all connected players.
 	}
+	/**
+	 * For purposes other than regular debug.
+	 * to notify the UI of an action.
+	 * */	
+	public synchronized static void fireOtherGameEvent(GameEvent ge){
+		me.fireGameEvent(ge);
+	}
 
 	private void fireGameEvent(GameEvent gameEvent) {
 		for(GameEventListener gel: listeners ){

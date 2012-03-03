@@ -4,6 +4,7 @@
 package org.techno.blackthree.server;
 
 import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.fireOtherGameEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,6 +20,7 @@ import org.techno.blackthree.common.Move;
 import org.techno.blackthree.common.Player;
 import org.techno.blackthree.common.Round;
 import org.techno.blackthree.common.RoundParameters;
+import org.techno.blackthree.common.event.GameEvent;
 
 /**
  * @author bageshwp
@@ -196,9 +198,13 @@ public class Process implements Runnable {
 		initPlayerInfo();
 
 		new Thread(this).start();
+		
+		//start polling thread.
 
+		
 	}
-
+	
+	
 	synchronized public void sendMessage(String msg) throws IOException {
 
 		output.writeObject(Codes.ADHOC_MESSAGE);

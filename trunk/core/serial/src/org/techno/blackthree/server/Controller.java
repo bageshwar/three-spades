@@ -4,9 +4,11 @@
 package org.techno.blackthree.server;
 
 import static org.techno.blackthree.common.event.ConsoleGameEventListener.debug;
+import static org.techno.blackthree.common.event.ConsoleGameEventListener.fireOtherGameEvent;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -78,9 +80,7 @@ public class Controller implements Runnable {
 	public int getSize() {
 		return size;
 	}
-
-	
-	
+		
 	/**
 	 * A synchronous method, that initializes the player, 
 	 * and sends other player updates about this.
@@ -128,13 +128,20 @@ public class Controller implements Runnable {
 					));
 					
 					//start a new thread for polling.
-					new Thread(new Runnable(){
+					/*new Thread(new Runnable(){
 
 						@Override
 						public void run() {
 							boolean connected=true;
+							try {
+								s.setSoLinger(true, 2);
+							} catch (SocketException e1) {
+								e1.printStackTrace();
+							}
 							while(connected){
 								connected = s.isConnected();
+								
+								debug(index+": "+connected+s.isClosed()+s.isBound()+s.isInputShutdown()+s.isOutputShutdown());
 								try {
 									Thread.sleep(Server.SERVER_POLL_TIME);
 								} catch (InterruptedException e) {
@@ -142,11 +149,10 @@ public class Controller implements Runnable {
 								}
 							}
 							//disconnected
-							fireGameEvent(new GameEvent(Codes.PLAYER_UPDATE,Arrays.asList(
-									index,Codes.PLAYER_DISCONNECTED,"N/A","N/A") 
-							));
+							fireGameEvent(new GameEvent(Codes.DISCONNECTED,index));
+							players[index] = null;
 							
-						}}).start();
+						}}).start();*/
 				}
 			}
 
