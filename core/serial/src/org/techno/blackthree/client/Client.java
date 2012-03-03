@@ -256,7 +256,14 @@ public class Client implements Runnable {
 	}
 
 	public void disconnect() throws IOException{
+		try{
+		clientSocket.shutdownInput();
+		clientSocket.shutdownOutput();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		this.clientSocket.close();
+		
 		connected=false;
 	}
 	

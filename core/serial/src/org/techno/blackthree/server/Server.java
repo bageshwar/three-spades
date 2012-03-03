@@ -14,7 +14,7 @@ public class Server {
 
 	public static final int PLAYER_COUNT=8;
 	public static final int CARD_COUNT=48;
-	public static final int SERVER_POLL_TIME=2000;
+	public static final int SERVER_POLL_TIME=5000;
 	public static final int CLIENT_POLL_TIME=5000;
 	
 	Controller controller;
