@@ -140,11 +140,7 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 							
 							//reset the panel's text
 							for(int i=0;i<monitor.getChildren().length;i++){
-							((ClientInfoWidget) (monitor.getChildren()[i])).getIcon().setText("");
-							((ClientInfoWidget) (monitor.getChildren()[i])).getIcon().setImage(
-									Activator.getImageDescriptor("icons/disconnected.jpg").createImage());
-							((ClientInfoWidget) (monitor.getChildren()[i])).getNameLabel().setText("");
-							((ClientInfoWidget) (monitor.getChildren()[i])).getPing().setText( "");
+								clientDisconnected(i);							
 							}
 						}
 						else {
@@ -181,6 +177,18 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 		start.setToolTipText("Start Server");
 		start.setImageDescriptor(Activator.getImageDescriptor("icons/green.png"));
 	}
+	
+	/**
+	 * Disconnects the specified client.
+	 * @param i The client id
+	 * */
+	private void clientDisconnected(int i){
+		((ClientInfoWidget) (monitor.getChildren()[i])).getIcon().setText("");
+		((ClientInfoWidget) (monitor.getChildren()[i])).getIcon().setImage(
+				Activator.getImageDescriptor("icons/disconnected.jpg").createImage());
+		((ClientInfoWidget) (monitor.getChildren()[i])).getNameLabel().setText("");
+		((ClientInfoWidget) (monitor.getChildren()[i])).getPing().setText( "");
+	}
 
 	@Override
 	public void setFocus() {
@@ -205,6 +213,10 @@ public class ServerConsoleView extends ViewPart implements GameEventListener {
 				}
 				else if(code.equals(Codes.LOG_MESSAGE)){
 					logger.append(gameEvent.getPayLoad().toString()+"\r\n");
+				}
+				else if(code.equals(Codes.DISCONNECTED)){
+					//need to disconnect the user! 
+					clientDisconnected((Integer)gameEvent.getPayLoad());
 				}
 
 			}
